@@ -1,0 +1,52 @@
+{
+  "type": "box",
+  "layout": "horizontal",
+  "alignItems": "center",
+  "contents": [
+    {
+      "type": "box",
+      "layout": "vertical",
+      "flex": 3,
+      "contents": [
+        {
+          "type": "text",
+          "text": "PLACEHOLDER_DATE",
+          "size": "xs",
+          "color": "#aaaaaa"
+        },
+        {
+          "type": "text",
+          "text": "PLACEHOLDER_STATUS",
+          "size": "sm",
+          "weight": "bold",
+          "color": "#333333"
+        }
+      ]
+    },
+    {
+      "type": "box",
+      "layout": "vertical",
+      "flex": 0,
+      "contents": [
+        {
+          "type": "text",
+          "text": "●",
+          "color": "PLACEHOLDER_COLOR",
+          "size": "xs",
+          "align": "end"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "flex": 2,
+      "style": "secondary",
+      "height": "sm",
+      "action": {
+        "type": "postback",
+        "label": "查看",
+        "data": "action=view_report&report_id=PLACEHOLDER_REPORT_ID"
+      }
+    }
+  ]
+}

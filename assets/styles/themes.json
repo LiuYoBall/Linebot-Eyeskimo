@@ -1,0 +1,26 @@
+{
+  "Conjunctivitis": {
+    "HEADER_BG": "#FFF5F5",
+    "BADGE_BG": "#FFEBEE",
+    "BADGE_TEXT": "高風險異常",
+    "THEME_COLOR": "#C62828",
+    "TITLE": "偵測到疑似結膜炎特徵",
+    "DISEASE_NAME": "結膜炎"
+  },
+  "Cataract": {
+    "HEADER_BG": "#FFF8E1",
+    "BADGE_BG": "#FFF3E0",
+    "BADGE_TEXT": "風險提示",
+    "THEME_COLOR": "#EF6C00",
+    "TITLE": "疑似早期白內障特徵",
+    "DISEASE_NAME": "白內障"
+  },
+  "default": {
+    "HEADER_BG": "#F5F5F5",
+    "BADGE_BG": "#EEEEEE",
+    "BADGE_TEXT": "檢測結果",
+    "THEME_COLOR": "#666666",
+    "TITLE": "檢測完成",
+    "DISEASE_NAME": "眼部異常"
+  }
+}

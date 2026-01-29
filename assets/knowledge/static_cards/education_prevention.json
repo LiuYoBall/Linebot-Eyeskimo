@@ -1,0 +1,69 @@
+{
+  "type": "bubble",
+  "size": "mega",
+  "hero": {
+    "type": "image",
+    "url": "https://images.unsplash.com/photo-1516574187841-693018f3778f?auto=format&fit=crop&w=800&q=80",
+    "size": "full",
+    "aspectRatio": "20:13",
+    "aspectMode": "cover"
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "🛡️ 護眼小秘訣",
+        "weight": "bold",
+        "size": "xl",
+        "color": "#0288D1"
+      },
+      {
+        "type": "text",
+        "text": "預防勝於治療，日常保養指南",
+        "weight": "bold",
+        "size": "xs",
+        "color": "#aaaaaa",
+        "margin": "xs"
+      },
+      {
+        "type": "separator",
+        "margin": "md"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "md",
+        "spacing": "sm",
+        "contents": [
+          { "type": "text", "text": "1. 3010 法則", "weight": "bold", "size": "sm", "color": "#333333" },
+          { "type": "text", "text": "用眼 30 分鐘，休息 10 分鐘。", "size": "sm", "color": "#666666", "margin": "xs" },
+          
+          { "type": "text", "text": "2. 多吃護眼食物", "weight": "bold", "size": "sm", "color": "#333333", "margin": "md" },
+          { "type": "text", "text": "深綠色蔬菜、葉黃素、魚油。", "size": "sm", "color": "#666666", "margin": "xs" },
+
+          { "type": "text", "text": "3. 定期檢查", "weight": "bold", "size": "sm", "color": "#333333", "margin": "md" },
+          { "type": "text", "text": "每年進行一次完整的眼底檢查。", "size": "sm", "color": "#666666", "margin": "xs" }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "spacing": "sm",
+    "contents": [
+      {
+        "type": "button",
+        "style": "primary",
+        "color": "#0288D1",
+        "action": {
+          "type": "message",
+          "label": "設定休息提醒 (模擬)",
+          "text": "我想設定護眼提醒"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "type": "bubble",
+  "size": "mega",
+  "header": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "🎭 設定助手風格",
+        "weight": "bold",
+        "size": "xl",
+        "color": "#0D8186",
+        "align": "center"
+      }
+    ]
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "請選擇您喜歡的對話風格，AI 將會依照您的選擇改變說話語氣：",
+        "wrap": true,
+        "size": "sm",
+        "color": "#666666"
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "spacing": "sm",
+    "contents": [
+      {
+        "type": "button",
+        "style": "secondary",
+        "height": "sm",
+        "action": {
+          "type": "message",
+          "label": "👨‍⚕️ 專業醫師 (Doctor)",
+          "text": "切換風格：doctor"
+        }
+      },
+      {
+        "type": "button",
+        "style": "secondary",
+        "height": "sm",
+        "action": {
+          "type": "message",
+          "label": "👩‍⚕️ 溫柔護理師 (Nurse)",
+          "text": "切換風格：nurse"
+        }
+      },
+      {
+        "type": "button",
+        "style": "secondary",
+        "height": "sm",
+        "action": {
+          "type": "message",
+          "label": "🤡 幽默演員 (Comedian)",
+          "text": "切換風格：comedian"
+        }
+      },
+      {
+        "type": "button",
+        "style": "secondary",
+        "height": "sm",
+        "action": {
+          "type": "message",
+          "label": "🥢 亞洲父母 (Asian Parent)",
+          "text": "切換風格：asian_parent"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "type": "bubble",
+  "size": "mega",
+  "hero": {
+    "type": "image",
+    "url": "https://images.unsplash.com/photo-1585640283738-953e5b1532f8?auto=format&fit=crop&w=800&q=80",
+    "size": "full",
+    "aspectRatio": "20:13",
+    "aspectMode": "cover"
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "👁️ 認識白內障",
+        "weight": "bold",
+        "size": "xl",
+        "color": "#EF6C00"
+      },
+      {
+        "type": "text",
+        "text": "水晶體混濁，視力像隔著毛玻璃",
+        "weight": "bold",
+        "size": "xs",
+        "color": "#aaaaaa",
+        "margin": "xs"
+      },
+      {
+        "type": "separator",
+        "margin": "md"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "md",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "text",
+            "text": "常見症狀：",
+            "weight": "bold",
+            "size": "sm",
+            "color": "#333333"
+          },
+          { "type": "text", "text": "• 視力模糊，像有霧氣", "size": "sm", "color": "#666666" },
+          { "type": "text", "text": "• 畏光，晚上看燈有光暈", "size": "sm", "color": "#666666" },
+          { "type": "text", "text": "• 色彩看起來較為枯黃", "size": "sm", "color": "#666666" }
+        ]
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "md",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "text",
+            "text": "高風險族群：",
+            "weight": "bold",
+            "size": "sm",
+            "color": "#333333"
+          },
+          { "type": "text", "text": "• 超過 55 歲長者", "size": "sm", "color": "#666666" },
+          { "type": "text", "text": "• 高度近視、糖尿病患者", "size": "sm", "color": "#666666" }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "spacing": "sm",
+    "contents": [
+      {
+        "type": "button",
+        "style": "primary",
+        "color": "#EF6C00",
+        "action": {
+          "type": "message",
+          "label": "立即進行自我檢測",
+          "text": "白內障檢測"
+        }
+      },
+      {
+        "type": "button",
+        "style": "link",
+        "action": {
+          "type": "uri",
+          "label": "查看詳細衛教文章",
+          "uri": "https://www.mohw.gov.tw/cp-16-40292-1.html"
+        }
+      }
+    ]
+  }
+}

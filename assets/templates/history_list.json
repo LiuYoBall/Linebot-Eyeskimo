@@ -1,0 +1,54 @@
+{
+  "type": "bubble",
+  "size": "mega",
+  "header": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "📅 歷史檢查紀錄",
+        "weight": "bold",
+        "size": "lg",
+        "color": "#1DB446"
+      },
+      {
+        "type": "text",
+        "text": "僅顯示最近 5 筆資料",
+        "size": "xxs",
+        "color": "#aaaaaa"
+      }
+    ]
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "spacing": "md",
+    "contents": [
+      {
+        "type": "text",
+        "text": "PLACEHOLDER_EMPTY_MSG",
+        "size": "sm",
+        "color": "#666666",
+        "align": "center",
+        "wrap": true
+      }
+      
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "button",
+        "style": "link",
+        "action": {
+          "type": "message",
+          "label": "開始新的檢測",
+          "text": "開始AI檢測"
+        }
+      }
+    ]
+  }
+}

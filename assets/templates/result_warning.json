@@ -1,0 +1,179 @@
+{
+  "type": "bubble",
+  "size": "mega",
+  "header": {
+    "type": "box",
+    "layout": "vertical",
+    "paddingAll": "16px",
+    "backgroundColor": "PLACEHOLDER_HEADER_BG", 
+    "contents": [
+      {
+        "type": "text",
+        "text": "AI 檢測分析報告",
+        "weight": "bold",
+        "size": "md",
+        "color": "#333333"
+      }
+    ]
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "paddingAll": "0px",
+    "contents": [
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "contents": [
+          {
+            "type": "image",
+            "url": "PLACEHOLDER_IMG_MAIN",
+            "size": "full",
+            "aspectRatio": "1:1",
+            "aspectMode": "cover",
+            "flex": 2,
+            "action": {"type": "uri", "uri": "PLACEHOLDER_IMG_MAIN"}
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "flex": 1,
+            "contents": [
+              {
+                "type": "image",
+                "url": "PLACEHOLDER_IMG_SUB1",
+                "size": "full",
+                "aspectRatio": "1:1",
+                "aspectMode": "cover",
+                "action": {"type": "uri", "uri": "PLACEHOLDER_IMG_SUB1"}
+              },
+              {
+                "type": "image",
+                "url": "PLACEHOLDER_IMG_SUB2",
+                "size": "full",
+                "aspectRatio": "1:1",
+                "aspectMode": "cover",
+                "action": {"type": "uri", "uri": "PLACEHOLDER_IMG_SUB2"}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "paddingAll": "20px",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "分析結果",
+                "size": "sm",
+                "color": "#888888",
+                "flex": 1,
+                "gravity": "center"
+              },
+              {
+                "type": "box",
+                "layout": "vertical",
+                "backgroundColor": "PLACEHOLDER_BADGE_BG",
+                "cornerRadius": "4px",
+                "paddingStart": "8px",
+                "paddingEnd": "8px",
+                "paddingTop": "4px",
+                "paddingBottom": "4px",
+                "flex": 0,
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "PLACEHOLDER_BADGE_TEXT",
+                    "color": "PLACEHOLDER_THEME_COLOR",
+                    "size": "sm",
+                    "weight": "bold"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": "PLACEHOLDER_TITLE",
+            "weight": "bold",
+            "size": "xl",
+            "color": "#333333",
+            "margin": "12px",
+            "wrap": true
+          },
+          {
+            "type": "separator",
+            "margin": "20px"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "margin": "10px",
+            "contents": [
+              {
+                "type": "button",
+                "action": {
+                  "type": "message",
+                  "label": "了解症狀詳情",
+                  "text": "我想了解PLACEHOLDER_DISEASE_NAME的資訊"
+                },
+                "style": "link",
+                "gravity": "center",
+                "color": "#333333",
+                "height": "sm"
+              },
+              {
+                "type": "separator"
+              },
+              {
+                "type": "button",
+                "action": {
+                  "type": "message",
+                  "label": "填寫評估問卷",
+                  "text": "PLACEHOLDER_SURVEY_CMD"
+                },
+                "style": "link",
+                "color": "PLACEHOLDER_THEME_COLOR",
+                "height": "sm"
+              },
+              {
+                "type": "separator"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "paddingAll": "16px",
+    "contents": [
+      {
+        "type": "button",
+        "action": {
+          "type": "postback",
+          "label": "重新檢測",
+          "data": "action=retry"
+        },
+        "style": "secondary",
+        "height": "sm"
+      },
+      {
+        "type": "text",
+        "text": "本結果僅供參考，非醫療診斷，請以醫師判斷為主。",
+        "size": "xxs",
+        "color": "#AAAAAA",
+        "align": "center",
+        "margin": "12px"
+      }
+    ]
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "type": "bubble",
+  "size": "mega",
+  "hero": {
+    "type": "image",
+    "url": "https://images.unsplash.com/photo-1599852233667-17559e21df91?auto=format&fit=crop&w=800&q=80",
+    "size": "full",
+    "aspectRatio": "20:13",
+    "aspectMode": "cover"
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "🦠 認識結膜炎",
+        "weight": "bold",
+        "size": "xl",
+        "color": "#D32F2F"
+      },
+      {
+        "type": "text",
+        "text": "俗稱紅眼症，感染或過敏引起",
+        "weight": "bold",
+        "size": "xs",
+        "color": "#aaaaaa",
+        "margin": "xs"
+      },
+      {
+        "type": "separator",
+        "margin": "md"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "md",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "text",
+            "text": "分辨類型：",
+            "weight": "bold",
+            "size": "sm",
+            "color": "#333333"
+          },
+          {
+            "type": "box",
+            "layout": "baseline",
+            "contents": [
+              { "type": "text", "text": "細菌性：", "weight": "bold", "size": "sm", "flex": 2 },
+              { "type": "text", "text": "分泌物多且黏稠，黃綠色", "size": "sm", "color": "#666666", "flex": 5, "wrap": true }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "baseline",
+            "contents": [
+              { "type": "text", "text": "病毒性：", "weight": "bold", "size": "sm", "flex": 2 },
+              { "type": "text", "text": "分泌物水狀，傳染力強", "size": "sm", "color": "#666666", "flex": 5, "wrap": true }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "baseline",
+            "contents": [
+              { "type": "text", "text": "過敏性：", "weight": "bold", "size": "sm", "flex": 2 },
+              { "type": "text", "text": "非常癢，季節交替常見", "size": "sm", "color": "#666666", "flex": 5, "wrap": true }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "spacing": "sm",
+    "contents": [
+      {
+        "type": "button",
+        "style": "primary",
+        "color": "#D32F2F",
+        "action": {
+          "type": "message",
+          "label": "症狀嚴重度評估",
+          "text": "結膜炎檢測"
+        }
+      },
+      {
+        "type": "button",
+        "style": "link",
+        "action": {
+          "type": "message",
+          "label": "如何舒緩眼睛癢？",
+          "text": "請問如何舒緩眼睛癢"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "type": "bubble",
+  "direction": "ltr",
+  "header": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "請確認偵測範圍",
+        "weight": "bold",
+        "size": "lg",
+        "color": "#1DB446"
+      }
+    ]
+  },
+  "hero": {
+    "type": "image",
+    "url": "PLACEHOLDER_CROP_IMG",
+    "size": "full",
+    "aspectRatio": "1:1",
+    "aspectMode": "cover",
+    "action": {
+      "type": "uri",
+      "uri": "PLACEHOLDER_CROP_IMG"
+    }
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "AI 已自動框選眼睛位置，請確認是否正確？",
+        "wrap": true,
+        "size": "sm",
+        "color": "#666666"
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "horizontal",
+    "spacing": "sm",
+    "contents": [
+      {
+        "type": "button",
+        "style": "primary",
+        "color": "#1DB446",
+        "action": {
+          "type": "postback",
+          "label": "✅ 正確，分析",
+          "data": "action=confirm_cnn&report_id=PLACEHOLDER_REPORT_ID"
+        }
+      },
+      {
+        "type": "button",
+        "style": "secondary",
+        "color": "#aaaaaa",
+        "action": {
+          "type": "postback",
+          "label": "❌ 重拍",
+          "data": "action=retry"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,494 @@
+{
+  "type": "carousel",
+  "contents": [
+    {
+      "type": "bubble",
+      "size": "mega",
+      "hero": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "image",
+            "url": "https://raw.githubusercontent.com/szutinglin/line_bot_Eye_test/main/hero_eye_health.png",
+            "size": "full",
+            "aspectRatio": "4:3",
+            "aspectMode": "cover",
+            "backgroundColor": "#F8F9FA"
+          }
+        ],
+        "paddingAll": "0px"
+      },
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "AI眼睛健康快篩",
+            "weight": "bold",
+            "size": "xxl",
+            "color": "#5B9BD5",
+            "align": "center",
+            "margin": "md"
+          },
+          {
+            "type": "text",
+            "text": "協助進行結膜炎與白內障的初步風險評估",
+            "size": "sm",
+            "color": "#666666",
+            "align": "center",
+            "wrap": true,
+            "margin": "md"
+          },
+          {
+            "type": "separator",
+            "margin": "lg"
+          },
+          {
+            "type": "text",
+            "text": "👉 左右滑動查看更多",
+            "size": "xs",
+            "color": "#AAAAAA",
+            "align": "center",
+            "margin": "md"
+          },
+          {
+            "type": "spacer",
+            "size": "xxl"
+          },
+          {
+            "type": "spacer",
+            "size": "xxl"
+          },
+          {
+            "type": "spacer",
+            "size": "xxl"
+          }
+        ],
+        "paddingAll": "20px"
+      },
+      "footer": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "button",
+            "style": "primary",
+            "color": "#17A2B8",
+            "action": {
+              "type": "message",
+              "label": "📸 立即開始檢測",
+              "text": "開始AI檢測"
+            }
+          },
+          {
+            "type": "button",
+            "style": "secondary", 
+            "margin": "sm",
+            "action": {
+              "type": "message",
+              "label": "≡ 更多功能選單",
+              "text": "開啟主選單" 
+            }
+          }
+        ],
+        "paddingAll": "20px"
+      }
+    },
+    {
+      "type": "bubble",
+      "size": "mega",
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "使用說明",
+            "weight": "bold",
+            "size": "xxl",
+            "color": "#333333"
+          },
+          {
+            "type": "separator",
+            "margin": "lg"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                  {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "📷",
+                        "size": "xl",
+                        "align": "center"
+                      }
+                    ],
+                    "width": "50px",
+                    "height": "50px",
+                    "backgroundColor": "#E8F0FE",
+                    "cornerRadius": "25px",
+                    "justifyContent": "center",
+                    "alignItems": "center"
+                  },
+                  {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "拍攝眼睛影像",
+                        "weight": "bold",
+                        "size": "md",
+                        "color": "#333333"
+                      },
+                      {
+                        "type": "text",
+                        "text": "請使用手機於明亮環境下拍攝清晰的眼睛影像",
+                        "size": "sm",
+                        "color": "#999999",
+                        "wrap": true
+                      }
+                    ],
+                    "margin": "md",
+                    "flex": 1
+                  }
+                ],
+                "margin": "lg"
+              },
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "↓",
+                    "align": "center",
+                    "color": "#CCCCCC",
+                    "size": "xl"
+                  }
+                ],
+                "margin": "sm"
+              },
+              {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                  {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "🤖",
+                        "size": "xl",
+                        "weight": "bold",
+                        "color": "#FFFFFF",
+                        "align": "center"
+                      }
+                    ],
+                    "width": "50px",
+                    "height": "50px",
+                    "backgroundColor": "#E85D75",
+                    "cornerRadius": "25px",
+                    "justifyContent": "center",
+                    "alignItems": "center"
+                  },
+                  {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "AI 輔助分析",
+                        "weight": "bold",
+                        "size": "md",
+                        "color": "#333333"
+                      },
+                      {
+                        "type": "text",
+                        "text": "協助分析影像中可能的異常特徵與風險",
+                        "size": "sm",
+                        "color": "#999999",
+                        "wrap": true
+                      }
+                    ],
+                    "margin": "md",
+                    "flex": 1
+                  }
+                ],
+                "margin": "md"
+              },
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "↓",
+                    "align": "center",
+                    "color": "#CCCCCC",
+                    "size": "xl"
+                  }
+                ],
+                "margin": "sm"
+              },
+              {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                  {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "📋",
+                        "size": "xl",
+                        "align": "center"
+                      }
+                    ],
+                    "width": "50px",
+                    "height": "50px",
+                    "backgroundColor": "#FFF4E5",
+                    "cornerRadius": "25px",
+                    "justifyContent": "center",
+                    "alignItems": "center"
+                  },
+                  {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "查看分析結果",
+                        "weight": "bold",
+                        "size": "md",
+                        "color": "#333333"
+                      },
+                      {
+                        "type": "text",
+                        "text": "了解影像狀況與後續健康建議",
+                        "size": "sm",
+                        "color": "#999999",
+                        "wrap": true
+                      }
+                    ],
+                    "margin": "md",
+                    "flex": 1
+                  }
+                ],
+                "margin": "md"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": "--僅供健康參考，非醫療診斷--",
+            "color": "#999999",
+            "size": "xs",
+            "margin": "xxl",
+            "align": "center"
+          }
+        ],
+        "paddingAll": "20px"
+      },
+      "footer": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "button",
+            "style": "primary",
+            "color": "#17A2B8",
+            "action": {
+              "type": "message",
+              "label": "開始檢測",
+              "text": "開始檢測"
+            }
+          },
+          {
+            "type": "spacer",
+            "size": "xxl"
+          }
+        ],
+        "paddingAll": "15px"
+      }
+    },
+    {
+      "type": "bubble",
+      "size": "mega",
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "About Us",
+            "weight": "bold",
+            "size": "xxl",
+            "color": "#5B9BD5"
+          },
+          {
+            "type": "separator",
+            "margin": "lg"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "眼科健康風險評估平台",
+                    "weight": "bold",
+                    "size": "md",
+                    "color": "#333333"
+                  }
+                ],
+                "margin": "md"
+              }
+            ],
+            "margin": "lg"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "提供眼科影像風險評估，協助了解結膜炎與白內障等常見眼疾的可能風險。",
+                "size": "sm",
+                "color": "#666666",
+                "wrap": true
+              }
+            ],
+            "margin": "md"
+          },
+          {
+            "type": "separator",
+            "margin": "xl"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "🎯 我們的期望",
+                "weight": "bold",
+                "size": "md",
+                "color": "#333333"
+              },
+              {
+                "type": "text",
+                "text": "透過 AI 技術協助提供便捷的眼科健康初步評估服務。",
+                "size": "sm",
+                "color": "#666666",
+                "wrap": true,
+                "margin": "sm"
+              }
+            ],
+            "margin": "lg"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "⚠️",
+                    "size": "lg",
+                    "flex": 0
+                  },
+                  {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "免責聲明",
+                        "weight": "bold",
+                        "size": "sm",
+                        "color": "#FF6B6B"
+                      },
+                      {
+                        "type": "text",
+                        "text": "本服務所提供之資訊僅供健康參考，非醫療診斷或治療建議。如有任何不適或疑慮，請諮詢專業醫療人員。",
+                        "size": "xs",
+                        "color": "#FF6B6B",
+                        "wrap": true,
+                        "margin": "xs"
+                      }
+                    ],
+                    "margin": "sm"
+                  }
+                ]
+              }
+            ],
+            "margin": "xl",
+            "backgroundColor": "#FFF5F5",
+            "cornerRadius": "8px",
+            "paddingAll": "15px"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "v1.0.0 | Eye's 疾模 Team",
+                "size": "xxs",
+                "color": "#CCCCCC",
+                "align": "center"
+              }
+            ],
+            "margin": "xl"
+          },
+          {
+            "type": "spacer",
+            "size": "lg"
+          }
+        ],
+        "paddingAll": "20px"
+      },
+      "footer": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "button",
+            "style": "link",
+            "action": {
+              "type": "uri",
+              "label": "💬 聯絡我們",
+              "uri": "https://line.me/R/ti/p/@yourlinebot"
+            },
+            "color": "#17A2B8"
+          },
+          {
+            "type": "spacer",
+            "size": "xxl"
+          }
+        ],
+        "paddingAll": "20px"
+      }
+    }
+  ]
+}

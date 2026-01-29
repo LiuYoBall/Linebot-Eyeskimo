@@ -1,0 +1,172 @@
+{
+  "type": "bubble",
+  "size": "giga",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "paddingAll": "0px",
+    "contents": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&w=800&q=80",
+        "size": "full",
+        "aspectRatio": "2.5:1",
+        "aspectMode": "cover"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "backgroundColor": "#00000066",
+        "position": "absolute",
+        "offsetBottom": "0px",
+        "offsetStart": "0px",
+        "offsetEnd": "0px",
+        "paddingAll": "15px",
+        "contents": [
+          {
+            "type": "text",
+            "text": "功能主選單",
+            "color": "#ffffff",
+            "weight": "bold",
+            "size": "xl"
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "paddingAll": "15px",
+        "contents": [
+          {
+            "type": "text",
+            "text": "請選擇服務項目：",
+            "size": "sm",
+            "color": "#aaaaaa",
+            "margin": "sm"
+          },
+          {
+            "type": "separator",
+            "margin": "md"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "spacing": "md",
+            "margin": "lg",
+            "contents": [
+              {
+                "type": "button",
+                "style": "secondary",
+                "height": "sm",
+                "color": "#E3F2FD",
+                "action": {
+                  "type": "message",
+                  "label": "📸 AI 影像檢測",
+                  "text": "開始AI檢測"
+                },
+                "flex": 1
+              },
+              {
+                "type": "button",
+                "style": "secondary",
+                "height": "sm",
+                "color": "#E8F5E9",
+                "action": {
+                  "type": "message",
+                  "label": "📝 純文字問診",
+                  "text": "文字問診模式"
+                },
+                "flex": 1
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "spacing": "md",
+            "margin": "md",
+            "contents": [
+              {
+                "type": "button",
+                "style": "secondary",
+                "height": "sm",
+                "color": "#FFF3E0",
+                "action": {
+                  "type": "message",
+                  "label": "🏥 附近診所",
+                  "text": "尋找附近診所"
+                },
+                "flex": 1
+              },
+              {
+                "type": "button",
+                "style": "secondary",
+                "height": "sm",
+                "color": "#F3E5F5",
+                "action": {
+                  "type": "message",
+                  "label": "📚 衛教資訊",
+                  "text": "開啟衛教選單"
+                },
+                "flex": 1
+              }
+            ]
+          },
+          {
+            "type": "separator",
+            "margin": "xl"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "spacing": "md",
+            "margin": "md",
+            "contents": [
+              {
+                "type": "button",
+                "style": "secondary",
+                "height": "sm",
+                "color": "#F5F5F5",
+                "action": {
+                  "type": "message",
+                  "label": "📜 歷史紀錄",
+                  "text": "查詢紀錄"
+                },
+                "flex": 1
+              },
+              {
+                "type": "button",
+                "style": "secondary",
+                "height": "sm",
+                "color": "#F5F5F5",
+                "action": {
+                  "type": "message",
+                  "label": "⚙️ 設定風格",
+                  "text": "設定"
+                },
+                "flex": 1
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "button",
+        "style": "link",
+        "height": "sm",
+        "action": {
+          "type": "message",
+          "label": "關於我們",
+          "text": "關於我們"
+        },
+        "color": "#aaaaaa"
+      }
+    ]
+  }
+}

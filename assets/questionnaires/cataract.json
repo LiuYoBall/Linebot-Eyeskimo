@@ -1,0 +1,196 @@
+{
+  "surveyId": "cataract",
+  "description": "白內障專項評估",
+  "questions": [
+    {
+      "id": "Q1",
+      "survey": "cataract",
+      "next": "Q2",
+      "type": "text",
+      "text": "Q1/5 【照片確認】為了讓 AI 判讀準確，請問您剛才上傳的照片是否清楚？（有無手震或模糊）",
+      "quickReply": {
+        "items": [
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "很清楚",
+              "data": "key=photo_quality&value=clear&confidence=high",
+              "displayText": "照片很清楚，那是眼睛原本的樣子"
+            }
+          },
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "有點模糊/沒對焦",
+              "data": "key=photo_quality&value=blurry&confidence=low",
+              "displayText": "照片有點模糊，可能沒對好焦"
+            }
+          },
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "因為眼睛霧霧的",
+              "data": "key=photo_quality&value=cloudy_eye&confidence=high",
+              "displayText": "不是照片模糊，是眼睛看起來就霧霧白白的"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "Q2",
+      "survey": "cataract",
+      "next": "Q3",
+      "type": "text",
+      "text": "Q2/5 【發生速度】請問視力變差或模糊的情況，是大約多久時間內發生的？",
+      "quickReply": {
+        "items": [
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "慢慢變差 (數月/年)",
+              "data": "key=progression&value=gradual&risk=cataract_likely",
+              "displayText": "是這幾個月甚至幾年慢慢變差的"
+            }
+          },
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "近期變差 (1-2週)",
+              "data": "key=progression&value=recent&risk=monitor",
+              "displayText": "最近一兩週感覺變差明顯"
+            }
+          },
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "突然看不見 (幾天內)",
+              "data": "key=progression&value=sudden&risk=emergency",
+              "displayText": "這幾天突然看不清楚或是看不見"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "Q3",
+      "survey": "cataract",
+      "next": "Q4",
+      "type": "text",
+      "text": "Q3/5 【視覺感受】看東西時，最接近下列哪種感覺？",
+      "quickReply": {
+        "items": [
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "霧霧的/像隔著毛玻璃",
+              "data": "key=visual_symptom&value=foggy&symptom=cataract",
+              "displayText": "感覺眼前霧霧的，像隔著髒玻璃或毛玻璃"
+            }
+          },
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "線條扭曲/中心黑影",
+              "data": "key=visual_symptom&value=distortion&symptom=macular",
+              "displayText": "看直線會扭曲，或視野中心有固定黑影"
+            }
+          },
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "視野缺損/像被布遮擋",
+              "data": "key=visual_symptom&value=field_loss&symptom=retinal",
+              "displayText": "視野旁邊像被窗簾遮住一塊"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "Q4",
+      "survey": "cataract",
+      "next": "Q5",
+      "type": "text",
+      "text": "Q4/5 【夜間與眩光】在晚上看車燈，或白天遇到強光時，會有什麼感覺？",
+      "quickReply": {
+        "items": [
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "特別刺眼/有光暈",
+              "data": "key=glare_sensitivity&value=high&symptom=cataract_plus",
+              "displayText": "會覺得光線暈開，或是特別刺眼畏光"
+            }
+          },
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "晚上反而比較清楚",
+              "data": "key=glare_sensitivity&value=better_at_night&symptom=central_cataract",
+              "displayText": "晚上或是暗的地方反而看得比較清楚"
+            }
+          },
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "沒有特殊感覺",
+              "data": "key=glare_sensitivity&value=none&symptom=normal",
+              "displayText": "光線強弱對視力沒有太大影響"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "Q5",
+      "survey": "cataract",
+      "next": "result",
+      "type": "text",
+      "text": "Q5/5 【疼痛與紅腫】除了看不清楚，眼睛是否會感到疼痛或紅腫？",
+      "quickReply": {
+        "items": [
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "不會痛/無紅腫",
+              "data": "key=pain_redness&value=none&risk=cataract_pure",
+              "displayText": "完全不會痛，也沒有紅腫"
+            }
+          },
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "會脹痛/甚至頭痛",
+              "data": "key=pain_redness&value=painful&risk=glaucoma_alert",
+              "displayText": "眼睛會脹痛，有時候連頭都很痛"
+            }
+          },
+          {
+            "type": "action",
+            "action": {
+              "type": "postback",
+              "label": "眼睛很紅",
+              "data": "key=pain_redness&value=redness&risk=inflammation",
+              "displayText": "不太痛但是眼睛充滿紅血絲"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

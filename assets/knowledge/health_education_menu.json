@@ -1,0 +1,98 @@
+{
+  "type": "carousel",
+  "contents": [
+    {
+      "type": "bubble",
+      "size": "kilo",
+      "hero": {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1585640283738-953e5b1532f8?auto=format&fit=crop&w=600&q=80",
+        "size": "full",
+        "aspectRatio": "4:3",
+        "aspectMode": "cover"
+      },
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          { "type": "text", "text": "白內障知識", "weight": "bold", "size": "lg" },
+          { "type": "text", "text": "視力模糊、畏光？了解白內障的成因與治療方式。", "size": "sm", "color": "#666666", "wrap": true, "margin": "sm" }
+        ]
+      },
+      "footer": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "button",
+            "style": "link",
+            "height": "sm",
+            "action": { "type": "message", "label": "閱讀詳情", "text": "衛教：白內障" }
+          }
+        ]
+      }
+    },
+    {
+      "type": "bubble",
+      "size": "kilo",
+      "hero": {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1599852233667-17559e21df91?auto=format&fit=crop&w=600&q=80",
+        "size": "full",
+        "aspectRatio": "4:3",
+        "aspectMode": "cover"
+      },
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          { "type": "text", "text": "結膜炎護理", "weight": "bold", "size": "lg" },
+          { "type": "text", "text": "眼睛紅腫癢？分辨細菌性與過敏性結膜炎的差異。", "size": "sm", "color": "#666666", "wrap": true, "margin": "sm" }
+        ]
+      },
+      "footer": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "button",
+            "style": "link",
+            "height": "sm",
+            "action": { "type": "message", "label": "閱讀詳情", "text": "衛教：結膜炎" }
+          }
+        ]
+      }
+    },
+    {
+      "type": "bubble",
+      "size": "kilo",
+      "hero": {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1516574187841-693018f3778f?auto=format&fit=crop&w=600&q=80",
+        "size": "full",
+        "aspectRatio": "4:3",
+        "aspectMode": "cover"
+      },
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          { "type": "text", "text": "日常預防保健", "weight": "bold", "size": "lg" },
+          { "type": "text", "text": "3C族必看！如何透過飲食與習慣保護您的靈魂之窗。", "size": "sm", "color": "#666666", "wrap": true, "margin": "sm" }
+        ]
+      },
+      "footer": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "button",
+            "style": "link",
+            "height": "sm",
+            "action": { "type": "message", "label": "閱讀詳情", "text": "衛教：預防保健" }
+          }
+        ]
+      }
+    }
+  ]
+}
