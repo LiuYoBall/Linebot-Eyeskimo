@@ -6,6 +6,9 @@ from datetime import datetime, timedelta
 from google.cloud import storage
 from typing import Optional, Tuple
 
+import google.auth
+from google.auth.transport.requests import Request as GoogleAuthRequest
+
 from config import settings
 from models import ai_manager
 from schemas import (
@@ -37,7 +40,7 @@ class ImageService:
 
     def _upload_to_gcs(self, image_data: bytes, folder: str, user_id: str) -> str:
         """
-        上傳圖片至 GCS 並回傳 Public URL
+        上傳圖片至 GCS 並回傳 URL
         路徑格式: images/{folder}/{user_id}/{uuid}.jpg
         """
         filename = f"{uuid.uuid4()}.jpg"
@@ -49,10 +52,26 @@ class ImageService:
         
         # 2. 產生 Signed URL
         try:
+            # 取得目前的憑證資訊
+            credentials, _ = google.auth.default()
+
+            # 確保憑證有效 (Cloud Run 的 Token 有時需要 refresh)
+            if not credentials.valid:
+                credentials.refresh(GoogleAuthRequest())
+
+            # 嘗試取得服務帳號 Email
+            # 本地 key.json 會自動有; Cloud Run 環境則需要從 credentials 屬性抓
+            sa_email = getattr(credentials, "service_account_email", None)
+            
+            # 產生簽署連結
+            # service_account_email: 告訴函式若無私鑰，請呼叫 IAM API 代簽
+            # access_token: IAM API 驗證用
             url = blob.generate_signed_url(
                 version="v4",
-                expiration=timedelta(hours=24), # 設定連結有效時間(V4 簽章上限 7 天)
-                method="GET"
+                expiration=timedelta(hours=24),
+                method="GET",
+                service_account_email=sa_email, 
+                access_token=credentials.token 
             )
             return url
             
