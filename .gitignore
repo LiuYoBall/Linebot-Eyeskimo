@@ -2,12 +2,9 @@
 __pycache__/
 *.pyc
 
-#  忽略模型權重檔與金鑰
+#  忽略金鑰
 key.json
-weights/*.pt
-weights/*.pth
-# 保留資料夾結構，但忽略內容
-!weights/.gitkeep
+
 
 # 忽略環境與作業系統
 *.venv
