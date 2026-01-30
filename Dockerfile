@@ -24,5 +24,9 @@ RUN uv sync --frozen
 # 6. 複製您的程式碼與靜態資源
 COPY . .
 
+RUN echo "=== Checking weights directory ===" && \
+    ls -lh weights/ || echo "weights directory NOT FOUND" && \
+    echo "=================================="
+
 # 7. 啟動指令 (使用 fastAPI)
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

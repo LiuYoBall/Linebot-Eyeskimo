@@ -19,8 +19,8 @@ class Settings(BaseSettings):
     # C. AI 模型參數 (可透過環境變數微調)
     # ==========================================
     # 模型檔案路徑 (Container 內部的絕對路徑)
-    MODEL_YOLO_PATH: str = "weights/yolo.pt"
-    MODEL_CNN_PATH: str = "weights/CNN.pth"
+    MODEL_YOLO_PATH: str = "/app/weights/yolo.pt"
+    MODEL_CNN_PATH: str = "/app/weights/CNN.pth"
 
     # 判定邏輯 (Thresholds)
     AI_CONF_THRESHOLD: float = 0.25  # YOLO 信心門檻
