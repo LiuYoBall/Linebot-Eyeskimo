@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict, Any
 
 from linebot import LineBotApi, WebhookHandler
+from linebot.models import RichMenu, RichMenuSize, RichMenuArea, RichMenuBounds, MessageAction
 from linebot.models import (
     TextSendMessage, FlexSendMessage, 
     QuickReply, QuickReplyButton, PostbackAction
@@ -17,10 +18,11 @@ class LineService:
         # 初始化 LINE Bot API
         self.api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
         self.handler = WebhookHandler(settings.LINE_CHANNEL_SECRET)
-        
-        # 設定模板路徑
         self.template_dir = Path("assets/templates")
-        self.themes = self._load_json(Path("assets/styles/themes.json"))
+
+        # 載入主題設定 (若檔案不存在需有防呆)
+        theme_path = Path("assets/styles/themes.json")
+        self.themes = self._load_json(theme_path) if theme_path.exists() else {}
 
     def _load_json(self, path: Path) -> Dict[str, Any]:
         """通用 JSON 讀取工具"""
@@ -264,6 +266,7 @@ class LineService:
         except Exception as e:
             print(f"❌ Send history failed: {e}")
             self.reply_text(reply_token, "查詢紀錄時發生錯誤。")
+
 
 # 實例化
 line_service = LineService()

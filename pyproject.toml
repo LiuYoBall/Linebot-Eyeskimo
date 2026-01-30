@@ -19,3 +19,14 @@ dependencies = [
     "ultralytics>=8.4.8",
     "uvicorn>=0.40.0",
 ]
+
+# 1. 定義 PyTorch CPU 版本的來源倉庫
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+# 2. 指定 torch 和 torchvision 必須從上面的倉庫下載
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+torchvision = { index = "pytorch-cpu" }

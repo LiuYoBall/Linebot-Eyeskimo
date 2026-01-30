@@ -78,30 +78,79 @@ def handle_text_message(event):
     
     logger.info(f"收到文字 [{user_id}]: {text}")
 
-    # --- 1. 呼叫選單 ---
-    if text == "設定":
+    # --- Rich Menu 按鈕處理 ---
+
+    # 1. [風格設定]
+    if text == "風格設定":
         try:
-            # 讀取 type_selection.json 並發送
-            # 這裡直接呼叫 line_service 內部 helper，或手動讀取
             bubble = line_service._load_template("type_selection.json")
             line_service.api.reply_message(
                 event.reply_token,
                 FlexSendMessage(alt_text="請選擇助手風格", contents=bubble)
             )
         except Exception as e:
-            logger.error(f"發送選單失敗: {e}")
-            line_service.reply_text(event.reply_token, "無法載入選單，請檢查伺服器設定。")
+            logger.error(f"風格選單載入失敗: {e}")
+            line_service.reply_text(event.reply_token, "暫時無法載入風格選單。")
         return
     
-    if text in ["開啟主選單", "選單", "Menu"]:
+    # 2. [開始檢測]
+    if text == "開始檢測":
+        # 引導使用者上傳圖片或選擇文字模式
+        msg = "請直接傳送一張「眼睛照片」給我進行分析 📸\n\n或者輸入「白內障檢測」/「結膜炎檢測」使用文字問卷模式。"
+        line_service.reply_text(event.reply_token, msg)
+        return
+
+    # 3. [歷史紀錄]
+    if text in ["歷史紀錄", "查詢紀錄", "History"]:
         try:
-            bubble = line_service._load_template("menu_main.json")
-            line_service.api.reply_message(
-                event.reply_token,
-                FlexSendMessage(alt_text="功能主選單", contents=bubble)
-            )
+            reports = db_service.get_reports_by_user(user_id, limit=5)
+            history_data = []
+            for r in reports:
+                status_text = "檢測中"
+                color = "#aaaaaa"
+                if r.cnn_result:
+                    if r.cnn_result.status == DiagnosisStatus.NOT_DETECTED:
+                        status_text = "正常 / 低風險"
+                        color = "#1DB446"
+                    else:
+                        disease_map = {"Cataract": "白內障", "Conjunctivitis": "結膜炎", "None": "正常"}
+                        disease_enum_val = r.cnn_result.disease.value if hasattr(r.cnn_result.disease, "value") else str(r.cnn_result.disease)
+                        disease_name = disease_map.get(disease_enum_val, disease_enum_val)
+                        status_text = f"疑似{disease_name}"
+                        color = "#D32F2F" if "結膜炎" in status_text else "#EF6C00"
+                
+                try:
+                    dt_obj = datetime.fromtimestamp(r.timestamp)
+                    date_str = dt_obj.strftime("%Y/%m/%d")
+                except:
+                    date_str = str(r.timestamp)
+
+                history_data.append({"id": r.report_id, "date": date_str, "status": status_text, "color": color})
+            
+            line_service.send_history_list(event.reply_token, history_data)
         except Exception as e:
-            logger.error(f"主選單載入失敗: {e}")
+            logger.error(f"查詢歷史失敗: {e}")
+            line_service.reply_text(event.reply_token, "目前無法讀取紀錄，請稍後再試。")
+        return
+
+    # 4. [附近診所]
+    if text == "附近診所":
+        line_service.reply_text(event.reply_token, "請點擊對話框左下的「+」號，選擇「位置資訊」並傳送您的位置，我將為您搜尋附近的眼科診所 🏥")
+        return
+
+    # 5. [衛教資訊]
+    if text == "衛教資訊":
+        # 這裡可以回傳一個簡單的選單或文字
+        # 假設您之後會做一個 health_info.json，目前先用文字回應
+        msg = "【常見眼疾衛教】\n\n👁️ 白內障：水晶體混濁，造成視力模糊。\n👁️ 結膜炎：眼睛發紅、分泌物增加。\n\n請保持用眼衛生，定期檢查！"
+        line_service.reply_text(event.reply_token, msg)
+        return
+
+    # 6. [症狀問答] (引導進入 LLM 模式)
+    if text == "症狀問答":
+        current_persona = user_personas.get(user_id, "doctor")
+        # 這裡不直接回傳，而是讓使用者知道可以開始問
+        line_service.reply_text(event.reply_token, "請告訴我您目前的眼睛狀況，我將為您提供初步建議。(例如：眼睛紅紅的、覺得看東西模糊...)")
         return
 
     # --- 2. 處理風格切換指令 ---
