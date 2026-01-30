@@ -1,27 +1,30 @@
 import firebase_admin
-from firebase_admin import credentials, firestore
+from google.cloud import firestore 
 from config import settings
 from schemas import DiagnosticReport
-
 class DatabaseService:
     def __init__(self):
-        # 1. 初始化 Firebase Admin SDK
-        # 檢查是否已經初始化過 (避免 Hot Reload 時重複初始化報錯)
+        # 1. 初始化 Firebase Admin (保留給其他功能用)
         if not firebase_admin._apps:
-            print(f"🔥 Initializing Firestore for project: {settings.GCP_PROJECT_ID}")
-            
-            # 在 Cloud Run 或有安裝 gcloud 的本地端，通常不需要手動給 key
-            # 它會自動抓取 Application Default Credentials (ADC)
             try:
                 firebase_admin.initialize_app(options={
                     'projectId': settings.GCP_PROJECT_ID
                 })
             except Exception as e:
-                print(f"⚠️ Firebase init failed (若本地開發請確認已登入 gcloud): {e}")
+                print(f"⚠️ Firebase init warning: {e}")
 
-        # 2. 取得 Firestore Client
-        self.db = firestore.client()
-        self.collection = "diagnostic_reports"
+        # 2. 連線到 Firestore (指定 eyeskimo 資料庫)
+        print(f"🔌 Connecting to Firestore DB: eyeskimo")
+        try:
+            # 這裡使用 google.cloud.firestore.Client 才能接受 database 參數
+            self.db = firestore.Client(
+                project=settings.GCP_PROJECT_ID, 
+                database="eyeskimo"  # 👈 關鍵修正：指定您的資料庫名稱
+            )
+            self.collection = "diagnostic_reports"
+            print("✅ Firestore connected successfully.")
+        except Exception as e:
+            print(f"❌ Firestore connection failed: {e}")
 
     def save_report(self, report: DiagnosticReport) -> bool:
         """
