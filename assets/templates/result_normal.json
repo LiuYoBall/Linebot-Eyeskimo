@@ -17,74 +17,99 @@
       {
         "type": "text",
         "text": "報告編號：PLACEHOLDER_REPORT_ID",
-        "size": "xs",
+        "size": "xxs",
         "color": "#AAAAAA",
         "margin": "4px"
       }
     ]
   },
-  "hero": {
-    "type": "image",
-    "url": "PLACEHOLDER_IMG_MAIN",
-    "size": "full",
-    "aspectRatio": "20:13",
-    "aspectMode": "cover",
-    "action": {
-      "type": "uri",
-      "uri": "PLACEHOLDER_IMG_MAIN"
-    }
-  },
   "body": {
     "type": "box",
     "layout": "vertical",
-    "paddingAll": "20px",
+    "paddingAll": "0px",
     "contents": [
       {
         "type": "box",
-        "layout": "horizontal",
+        "layout": "vertical",
+        "paddingAll": "2px",
         "contents": [
           {
-            "type": "text",
-            "text": "分析結果",
-            "size": "sm",
-            "color": "#888888",
-            "flex": 1,
-            "gravity": "center"
-          },
-          {
             "type": "box",
-            "layout": "vertical",
-            "backgroundColor": "#E8F5E9",
-            "cornerRadius": "4px",
-            "paddingStart": "8px",
-            "paddingEnd": "8px",
-            "paddingTop": "4px",
-            "paddingBottom": "4px",
-            "flex": 0,
+            "layout": "horizontal",
+            "spacing": "xs",
             "contents": [
               {
-                "type": "text",
-                "text": "正常 / 低風險",
-                "color": "#2E7D32",
-                "size": "sm",
-                "weight": "bold"
+                "type": "image",
+                "url": "PLACEHOLDER_IMG_ORIGINAL_BOXED",
+                "size": "full",
+                "aspectRatio": "4:3",
+                "aspectMode": "cover",
+                "flex": 1,
+                "action": { "type": "uri", "uri": "PLACEHOLDER_IMG_ORIGINAL_BOXED" }
+              },
+              {
+                "type": "image",
+                "url": "PLACEHOLDER_IMG_CROP",
+                "size": "full",
+                "aspectRatio": "4:3",
+                "aspectMode": "cover",
+                "flex": 1,
+                "action": { "type": "uri", "uri": "PLACEHOLDER_IMG_CROP" }
               }
             ]
           }
         ]
       },
       {
-        "type": "separator",
-        "margin": "16px"
-      },
-      {
-        "type": "text",
-        "text": "影像特徵未見明顯異常。建議持續保持良好用眼習慣，並定期進行視力檢查。",
-        "margin": "16px",
-        "size": "sm",
-        "color": "#555555",
-        "wrap": true,
-        "lineSpacing": "4px"
+        "type": "box",
+        "layout": "vertical",
+        "paddingAll": "20px",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "分析結果",
+                "size": "sm",
+                "color": "#888888",
+                "flex": 1,
+                "gravity": "center"
+              },
+              {
+                "type": "box",
+                "layout": "vertical",
+                "backgroundColor": "#E8F5E9",
+                "cornerRadius": "4px",
+                "paddingStart": "8px",
+                "paddingEnd": "8px",
+                "paddingTop": "4px",
+                "paddingBottom": "4px",
+                "flex": 0,
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "正常 / 低風險",
+                    "color": "#2E7D32",
+                    "size": "sm",
+                    "weight": "bold"
+                  }
+                ]
+              }
+            ]
+          },
+          { "type": "separator", "margin": "16px" },
+          {
+            "type": "text",
+            "text": "影像特徵未見明顯異常。建議持續保持良好用眼習慣，並定期進行視力檢查。",
+            "margin": "16px",
+            "size": "sm",
+            "color": "#555555",
+            "wrap": true,
+            "lineSpacing": "4px"
+          }
+        ]
       }
     ]
   },
@@ -95,10 +120,10 @@
     "contents": [
       {
         "type": "button",
-        "action": {
-          "type": "message",
-          "label": "👀 護眼小知識",
-          "text": "請告訴我護眼小知識"
+        "action": { 
+          "type": "postback", 
+          "label": "👀 護眼小知識", 
+          "data": "action=view_education&topic=prevention"
         },
         "style": "secondary",
         "color": "#666666",
@@ -106,11 +131,7 @@
       },
       {
         "type": "button",
-        "action": {
-          "type": "postback",
-          "label": "重新檢測",
-          "data": "action=retry"
-        },
+        "action": { "type": "postback", "label": "重新檢測", "data": "action=retry" },
         "margin": "12px",
         "height": "sm",
         "style": "link",

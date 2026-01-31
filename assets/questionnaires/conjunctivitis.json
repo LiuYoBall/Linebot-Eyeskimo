@@ -38,8 +38,8 @@
     "Q5": {
       "text": "目前症狀是單眼為主，還是雙眼都有？",
       "options": [
-        { "label": "單眼", "value": "single_eye", "next": "END" },
-        { "label": "雙眼", "value": "both_eyes", "next": "END" }
+        { "label": "單眼", "value": "single_eye", "next": "result" },
+        { "label": "雙眼", "value": "both_eyes", "next": "result" }
       ]
     }
   }

@@ -27,7 +27,11 @@
             "type": "button",
             "style": "link",
             "height": "sm",
-            "action": { "type": "message", "label": "閱讀詳情", "text": "衛教：白內障" }
+            "action": { 
+              "type": "postback", 
+              "label": "閱讀詳情", 
+              "data": "action=view_education&topic=cataract"
+            }
           }
         ]
       }
@@ -58,7 +62,11 @@
             "type": "button",
             "style": "link",
             "height": "sm",
-            "action": { "type": "message", "label": "閱讀詳情", "text": "衛教：結膜炎" }
+            "action": { 
+              "type": "postback", 
+              "label": "閱讀詳情", 
+              "data": "action=view_education&topic=conjunctivitis"
+            }
           }
         ]
       }
@@ -89,7 +97,11 @@
             "type": "button",
             "style": "link",
             "height": "sm",
-            "action": { "type": "message", "label": "閱讀詳情", "text": "衛教：預防保健" }
+            "action": { 
+              "type": "postback", 
+              "label": "閱讀詳情", 
+              "data": "action=view_education&topic=prevention"
+            }
           }
         ]
       }

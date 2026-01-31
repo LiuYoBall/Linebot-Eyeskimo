@@ -2,7 +2,9 @@ import cv2
 import numpy as np
 import uuid
 import requests
+import io
 import os
+import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 
 from google.cloud import storage
@@ -12,8 +14,7 @@ from google.auth.transport.requests import Request as GoogleAuthRequest
 from config import settings
 from models import ai_manager
 from schemas import (
-    DiagnosticReport, YoloResult, CnnResult, 
-    ProcessStatus, DiagnosisStatus
+    DiagnosticReport, YoloResult, ProcessStatus, DiagnosisStatus
 )
 
 class ImageService:
@@ -193,6 +194,102 @@ class ImageService:
     # ==========================================
     # 🚀 Phase 2: CNN 診斷階段
     # ==========================================
+    def _draw_box_on_original(self, original_img: np.ndarray, bbox: list, status: str) -> np.ndarray:
+        """
+        在原圖上畫框，顏色根據診斷狀態決定
+        """
+        img_copy = original_img.copy()
+        if not bbox:
+            return img_copy
+
+        x1, y1, x2, y2 = map(int, bbox)
+
+        # 定義顏色 (BGR 格式)
+        colors = {
+            "Detected": (0, 0, 255),          # Red
+            "Risk": (0, 255, 255),            # Yellow
+            "Not-Detected": (0, 255, 0)       # Green
+        }
+        
+        # 預設使用綠色
+        color = colors.get(status, (0, 255, 0))
+        
+        # 畫框 (線條寬度 5)
+        cv2.rectangle(img_copy, (x1, y1), (x2, y2), color, 5)
+        
+        return img_copy
+
+    def _generate_chart_bytes(self, probs: dict) -> bytes:
+        """
+        生成直方圖
+        """
+        labels = list(probs.keys())
+        scores = list(probs.values())
+        
+        # 設定中文字型 (確保標題與圖例正常顯示)
+        plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei', 'Arial', 'Heiti TC']
+        plt.rcParams['axes.unicode_minus'] = False
+        
+        # 建立圖表 (增加高度以容納標題與下方圖例)
+        fig, ax = plt.subplots(figsize=(4, 3.5))
+        
+        y_pos = np.arange(len(labels))
+        # 顏色設定 (紅、橘)
+        bar_colors = ['#FF6B6B', '#FFA502']
+        
+        # --- 1. 改用迴圈繪製 (為了正確生成圖例) ---
+        rects = []
+        for i, (label, score, color) in enumerate(zip(labels, scores, bar_colors)):
+            # label 參數會自動被圖例抓取
+            rect = ax.barh(i, score, color=color, height=0.5, label=label)
+            rects.append(rect)
+
+            # --- 2. 標示數值 (百分比) ---
+            # 放在 Bar 的右側
+            label_x_pos = score + 0.02
+            pct_text = f"{score:.1%}"
+            ax.text(label_x_pos, i, pct_text, 
+                    ha='left', va='center', 
+                    fontsize=11, fontweight='bold', color='#333333')
+
+        # --- 3. UI 美化設定 ---
+        
+        # 加入標題
+        ax.set_title("AI 風險機率分析", fontsize=14, fontweight='bold', pad=10, color='#333333')
+        
+        # 反轉 Y 軸，讓第一個項目顯示在最上面 (符合直覺)
+        ax.invert_yaxis()
+        
+        # 隱藏 X 軸 (數值) 與 Y 軸 (標籤)
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False) # 這是您要求的：隱藏 Y 軸文字
+        
+        # 隱藏圖表外框 (只留乾淨的 Bar)
+        for spine in ['top', 'right', 'bottom', 'left']:
+            ax.spines[spine].set_visible(False)
+            
+        # 設定 X 軸範圍 (留空間給右側文字)
+        ax.set_xlim(0, 1.15)
+
+        # --- 4. 設定圖例 (顯示在下方) ---
+        # loc='upper center': 對齊點
+        # bbox_to_anchor=(0.5, -0.05): 相對位置 (往下拉)
+        # ncol=2: 兩欄並排顯示
+        # frameon=False: 去掉圖例邊框
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, 0), 
+                  ncol=2, frameon=False, fontsize=11)
+
+        # 調整佈局，確保不會切到圖例
+        plt.tight_layout()
+        
+        # 轉 Bytes
+        buf = io.BytesIO()
+        # bbox_inches='tight' 是關鍵，確保外掛的 Legend 不會被切掉
+        plt.savefig(buf, format='jpg', dpi=150, bbox_inches='tight')
+        plt.close(fig)
+        
+        return buf.getvalue()
+
     def run_cnn_phase(self, report: DiagnosticReport) -> DiagnosticReport:
         """
         接收使用者確認後的報告，下載裁切圖進行 CNN 分析
@@ -206,20 +303,38 @@ class ImageService:
         # 2. 執行 CNN 模型 (回傳 Result 物件 + 熱力圖圖片數據)
         cnn_result_obj, heatmap_img = ai_manager.cnn.predict(crop_img)
 
-        # 3. 如果有熱力圖，上傳之
-        heatmap_url = None
+        # 3. 上傳 Heatmap
         if heatmap_img is not None:
             heatmap_bytes = self._cv2_to_bytes(heatmap_img)
-            heatmap_url = self._upload_to_gcs(heatmap_bytes, folder="heatmaps", user_id=report.user_id)
-            cnn_result_obj.heatmap_image_url = heatmap_url
+            cnn_result_obj.heatmap_image_url = self._upload_to_gcs(heatmap_bytes, "heatmaps", report.user_id)
 
-        # 4. 更新報告
+        # 4. 生成 [左上] 原圖+框 (需要下載原圖)
+        original_img = self._download_image_from_url(report.original_image_url)
+        # 直接使用物件內的 status Enum
+        status_value = cnn_result_obj.status.value 
+        
+        boxed_img = self._draw_box_on_original(original_img, report.yolo_result.bbox, status_value)
+        boxed_bytes = self._cv2_to_bytes(boxed_img)
+        
+        # 上傳並記錄到 report
+        report.original_boxed_url = self._upload_to_gcs(boxed_bytes, "boxed", report.user_id)
+
+        # 5. 生成 [右下] 直方圖 (非 Not-Detected )
+        if cnn_result_obj.status != DiagnosisStatus.NOT_DETECTED:
+            # 從 CnnResult 物件中提取機率值來製作字典
+            probs_dict = {
+                "Cataract": cnn_result_obj.prob_cataract,
+                "Conjunctivitis": cnn_result_obj.prob_conjunctivitis
+            }
+            
+            chart_bytes = self._generate_chart_bytes(probs_dict)
+            
+            # 存入 CnnResult 
+            cnn_result_obj.chart_image_url = self._upload_to_gcs(chart_bytes, "charts", report.user_id)
+
+        # 6. 更新報告
         report.cnn_result = cnn_result_obj
         report.current_status = ProcessStatus.COMPLETED
-        
-        # (可選) 在這裡簡單根據狀態給一些預設建議，或留給 LLM 層處理
-        if cnn_result_obj.status == DiagnosisStatus.DETECTED:
-            report.suggestion = "檢測到潛在高風險特徵，建議儘速就醫檢查。"
         
         return report
 

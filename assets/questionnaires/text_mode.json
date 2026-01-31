@@ -1,328 +1,73 @@
 {
   "surveyId": "text_mode",
   "description": "一般眼睛症狀初步篩檢",
-  "questions": [
-    {
-      "id": "Q1",
-      "survey": "text_mode",
-      "next": "Q2",
-      "type": "text",
+  "start_question": "Q1",
+  "questions": {
+    "Q1": {
       "text": "Q1/8 【主要困擾】請問目前眼睛最讓您困擾的主要症狀是？",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "看不清楚/視力下降",
-              "data": "key=main_complaint&value=vision_loss&category=vision",
-              "displayText": "我覺得視力變差，看不清楚"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "眼睛紅/分泌物多",
-              "data": "key=main_complaint&value=red_discharge&category=infection",
-              "displayText": "眼睛紅紅的，或是分泌物很多"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "疼痛/異物感/癢",
-              "data": "key=main_complaint&value=pain_itch&category=surface",
-              "displayText": "眼睛痛、癢，或是有異物感"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "看東西變形/黑影",
-              "data": "key=main_complaint&value=distortion&category=retina",
-              "displayText": "看東西變形，或視野有黑影遮擋"
-            }
-          }
-        ]
-      }
+      "options": [
+        { "label": "看不清楚/視力下降", "value": "vision_loss", "next": "Q2" },
+        { "label": "眼睛紅/分泌物多", "value": "red_discharge", "next": "Q2" },
+        { "label": "疼痛/異物感/癢", "value": "pain_itch", "next": "Q2" },
+        { "label": "看東西變形/黑影", "value": "distortion", "next": "Q2" }
+      ]
     },
-    {
-      "id": "Q2",
-      "survey": "text_mode",
-      "next": "Q3",
-      "type": "text",
+    "Q2": {
       "text": "Q2/8 【發生速度】這些症狀是多久之內發生的？",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "突然發生 (幾小時/天)",
-              "data": "key=onset&value=acute&risk=high",
-              "displayText": "這幾天突然發生的"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "逐漸發生 (數週/月)",
-              "data": "key=onset&value=chronic&risk=medium",
-              "displayText": "已經持續好幾週或是幾個月了"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "時好時壞",
-              "data": "key=onset&value=intermittent&risk=low",
-              "displayText": "時好時壞，休息會好一點"
-            }
-          }
-        ]
-      }
+      "options": [
+        { "label": "突然發生 (幾小時/天)", "value": "acute", "next": "Q3" },
+        { "label": "逐漸發生 (數週/月)", "value": "chronic", "next": "Q3" },
+        { "label": "時好時壞", "value": "intermittent", "next": "Q3" }
+      ]
     },
-    {
-      "id": "Q3",
-      "survey": "text_mode",
-      "next": "Q4",
-      "type": "text",
+    "Q3": {
       "text": "Q3/8 【疼痛性質】請問眼睛會痛嗎？是哪種痛法？",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "完全不痛",
-              "data": "key=pain_type&value=none&sign=painless",
-              "displayText": "完全不會痛"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "沙沙的/刺痛/癢",
-              "data": "key=pain_type&value=surface_irritation&sign=surface",
-              "displayText": "像進沙子一樣刺刺的，或是很癢"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "深層脹痛/頭痛",
-              "data": "key=pain_type&value=deep_ache&sign=emergency",
-              "displayText": "眼睛深處脹痛，甚至伴隨頭痛"
-            }
-          }
-        ]
-      }
+      "options": [
+        { "label": "完全不痛", "value": "no_pain", "next": "Q4" },
+        { "label": "沙沙的/刺痛/癢", "value": "surface_irritation", "next": "Q4" },
+        { "label": "深層脹痛/頭痛", "value": "deep_ache", "next": "Q4" }
+      ]
     },
-    {
-      "id": "Q4",
-      "survey": "text_mode",
-      "next": "Q5",
-      "type": "text",
+    "Q4": {
       "text": "Q4/8 【分泌物】請問眼睛分泌物（眼屎）的狀況？",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "沒什麼分泌物",
-              "data": "key=discharge&value=none&type=dry",
-              "displayText": "沒什麼特別的分泌物"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "黃綠色/膿狀",
-              "data": "key=discharge&value=purulent&type=bacterial",
-              "displayText": "有很多黃綠色、黏稠的眼屎"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "清澈水狀",
-              "data": "key=discharge&value=watery&type=viral_allergy",
-              "displayText": "水水的，眼淚流不停"
-            }
-          }
-        ]
-      }
+      "options": [
+        { "label": "沒什麼分泌物", "value": "none", "next": "Q5" },
+        { "label": "黃綠色/膿狀", "value": "purulent", "next": "Q5" },
+        { "label": "清澈水狀", "value": "watery", "next": "Q5" }
+      ]
     },
-    {
-      "id": "Q5",
-      "survey": "text_mode",
-      "next": "Q6",
-      "type": "text",
+    "Q5": {
       "text": "Q5/8 【視覺品質】看東西的畫面有沒有出現以下異狀？",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "線條扭曲/中心黑影",
-              "data": "key=visual_distortion&value=macular_sign&disease=macular",
-              "displayText": "看直線會歪掉，或是中間有一塊黑黑的"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "彩虹光圈/霧視",
-              "data": "key=visual_distortion&value=halos&disease=glaucoma_cataract",
-              "displayText": "看燈光有彩虹光圈，或像看霧一樣"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "閃光/飛蚊/黑幕",
-              "data": "key=visual_distortion&value=flashes_curtain&disease=retinal_detachment",
-              "displayText": "有看到閃電、很多飛蚊，或像窗簾蓋下來"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "沒有以上狀況",
-              "data": "key=visual_distortion&value=none&disease=none",
-              "displayText": "沒有以上這些狀況"
-            }
-          }
-        ]
-      }
+      "options": [
+        { "label": "線條扭曲/中心黑影", "value": "macular_sign", "next": "Q6" },
+        { "label": "彩虹光圈/霧視", "value": "halos", "next": "Q6" },
+        { "label": "閃光/飛蚊/黑幕", "value": "flashes_curtain", "next": "Q6" },
+        { "label": "沒有以上狀況", "value": "none", "next": "Q6" }
+      ]
     },
-    {
-      "id": "Q6",
-      "survey": "text_mode",
-      "next": "Q7",
-      "type": "text",
+    "Q6": {
       "text": "Q6/8 【紅眼分佈】如果眼睛紅，請問是怎麼紅法？（若無紅眼請選無）",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "整隻眼睛紅/血絲多",
-              "data": "key=redness_pattern&value=diffuse&type=conjunctivitis",
-              "displayText": "整隻眼睛都紅紅的，充滿血絲"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "黑眼珠周圍一圈紅",
-              "data": "key=redness_pattern&value=ciliary_flush&type=iritis_cornea",
-              "displayText": "主要是黑眼珠周圍紅一圈"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "眼白有一塊鮮紅血塊",
-              "data": "key=redness_pattern&value=subconjunctival_hemorrhage&type=hemorrhage",
-              "displayText": "眼白突然出現一塊鮮紅色的血塊，其他地方不紅"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "沒有紅眼",
-              "data": "key=redness_pattern&value=none&type=normal",
-              "displayText": "眼睛沒有紅"
-            }
-          }
-        ]
-      }
+      "options": [
+        { "label": "整隻眼睛紅/血絲多", "value": "diffuse_redness", "next": "Q7" },
+        { "label": "黑眼珠周圍一圈紅", "value": "ciliary_flush", "next": "Q7" },
+        { "label": "眼白有一塊鮮紅血塊", "value": "subconjunctival_hemorrhage", "next": "Q7" },
+        { "label": "沒有紅眼", "value": "none", "next": "Q7" }
+      ]
     },
-    {
-      "id": "Q7",
-      "survey": "text_mode",
-      "next": "Q8",
-      "type": "text",
+    "Q7": {
       "text": "Q7/8 【風險因子】請問近期是否有以下狀況？",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "戴隱形眼鏡/受傷",
-              "data": "key=risk_factor&value=contact_lens_trauma&risk=high",
-              "displayText": "有戴隱形眼鏡，或眼睛最近受過傷/撞擊"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "糖尿病/高血壓",
-              "data": "key=risk_factor&value=chronic_disease&risk=retinopathy",
-              "displayText": "我有糖尿病或高血壓病史"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "長時間用眼",
-              "data": "key=risk_factor&value=digital_strain&risk=fatigue",
-              "displayText": "最近長時間看電腦手機或熬夜"
-            }
-          }
-        ]
-      }
+      "options": [
+        { "label": "戴隱形眼鏡/受傷", "value": "contact_lens_trauma", "next": "Q8" },
+        { "label": "糖尿病/高血壓", "value": "chronic_disease", "next": "Q8" },
+        { "label": "長時間用眼", "value": "digital_strain", "next": "Q8" }
+      ]
     },
-    {
-      "id": "Q8",
-      "survey": "text_mode",
-      "next": "result",
-      "type": "text",
+    "Q8": {
       "text": "Q8/8 【緩解反應】休息或閉眼後，症狀會改善嗎？",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "會改善",
-              "data": "key=relief&value=improved&type=fatigue_dry",
-              "displayText": "休息後會覺得舒服一點"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "沒改善/更痛",
-              "data": "key=relief&value=persistent&type=pathological",
-              "displayText": "休息沒用，甚至更不舒服"
-            }
-          }
-        ]
-      }
+      "options": [
+        { "label": "會改善", "value": "improved", "next": "result" },
+        { "label": "沒改善/更痛", "value": "persistent", "next": "result" }
+      ]
     }
-  ]
+  }
 }

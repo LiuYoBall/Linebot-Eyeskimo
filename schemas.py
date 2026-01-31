@@ -48,6 +48,9 @@ class CnnResult(BaseModel):
     # 詳細機率 (用於繪製長條圖)
     prob_cataract: float
     prob_conjunctivitis: float
+
+    # 用於直方圖的 URL (只在 Risk/Detected 時會有)
+    chart_image_url: Optional[str] = None
     
     # Grad-CAM 熱力圖連結 (僅 Risk/Detected 會有)
     heatmap_image_url: Optional[str] = None 
@@ -65,6 +68,9 @@ class DiagnosticReport(BaseModel):
     
     # --- 原始資源 ---
     original_image_url: str = Field(..., description="使用者上傳的原始圖")
+
+    # 畫上框的原圖 URL
+    original_boxed_url: Optional[str] = None
     
     # --- 分段結果 (Optional) ---
     yolo_result: Optional[YoloResult] = None

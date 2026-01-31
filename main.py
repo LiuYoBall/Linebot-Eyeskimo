@@ -1,21 +1,20 @@
 from dotenv import load_dotenv
-# 先嘗試載入本地的 .env 檔案
-# Cloud Run 時靜默忽略 
+# 先嘗試載入本地的 .env 檔案；Cloud Run 時靜默忽略 
 load_dotenv()
-
+import random
 from contextlib import asynccontextmanager
 from urllib.parse import quote_plus
 from pathlib import Path
 from datetime import datetime
 import json
+import copy
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (
-    MessageEvent, TextMessage, ImageMessage, PostbackEvent, 
-    FlexSendMessage, LocationMessage, FollowEvent
-)
+    MessageEvent, TextMessage, ImageMessage, PostbackEvent, FlexSendMessage, FollowEvent
+    )
 
 # 匯入模組
 from config import settings
@@ -113,33 +112,80 @@ def handle_text_message(event):
     # 3. [歷史紀錄]
     if text in ["歷史紀錄", "查詢紀錄", "History"]:
         try:
-            reports = db_service.get_reports_by_user(user_id, limit=5)
-            history_data = []
-            for r in reports:
-                status_text = "檢測中"
-                color = "#aaaaaa"
-                if r.cnn_result:
-                    if r.cnn_result.status == DiagnosisStatus.NOT_DETECTED:
-                        status_text = "正常 / 低風險"
-                        color = "#1DB446"
-                    else:
-                        disease_map = {"Cataract": "白內障", "Conjunctivitis": "結膜炎", "None": "正常"}
-                        disease_enum_val = r.cnn_result.disease.value if hasattr(r.cnn_result.disease, "value") else str(r.cnn_result.disease)
-                        disease_name = disease_map.get(disease_enum_val, disease_enum_val)
-                        status_text = f"疑似{disease_name}"
-                        color = "#D32F2F" if "結膜炎" in status_text else "#EF6C00"
-                
-                try:
-                    dt_obj = datetime.fromtimestamp(r.timestamp)
-                    date_str = dt_obj.strftime("%Y/%m/%d")
-                except:
-                    date_str = str(r.timestamp)
+            # 讀取樣板
+            bubble_container = line_service._load_template("history_list.json")
+            row_template = line_service._load_template("history_row.json")
 
-                history_data.append({"id": r.report_id, "date": date_str, "status": status_text, "color": color})
+            # C. 從 DB 撈取資料
+            reports = db_service.get_reports_by_user(user_id, limit=5)
             
-            line_service.send_history_list(event.reply_token, history_data)
+            # 取得容器中用來放資料的 contents 陣列
+            # 根據您的 json，位置在 body -> contents
+            container_contents = bubble_container["body"]["contents"]
+
+            if not reports:
+                # D-1. 如果沒有資料將 placeholder 替換成提示文字
+                # 假設 contents[0] 就是 placeholder text component
+                json_str = json.dumps(container_contents)
+                json_str = json_str.replace("PLACEHOLDER_EMPTY_MSG", "您目前還沒有檢測紀錄喔！")
+                bubble_container["body"]["contents"] = json.loads(json_str)
+            else:
+                # D-2. 如果有資料
+                # 1. 先清空容器內的 placeholder (清空原本的 "PLACEHOLDER_EMPTY_MSG" 文字元件)
+                container_contents.clear()
+
+                # 2. 遍歷資料並產生 Row
+                for r in reports:
+                    # --- 邏輯處理  ---
+                    status_text = "檢測中"
+                    color = "#aaaaaa"
+                    
+                    if r.cnn_result:
+                        if r.cnn_result.status == DiagnosisStatus.NOT_DETECTED:
+                            status_text = "低風險"
+                            color = "#1DB446"
+                        else:
+                            disease_map = {"Cataract": "白內障", "Conjunctivitis": "結膜炎", "None": "低風險"}
+                            disease_enum_val = r.cnn_result.disease.value if hasattr(r.cnn_result.disease, "value") else str(r.cnn_result.disease)
+                            disease_name = disease_map.get(disease_enum_val, disease_enum_val)
+                            status_text = f"疑似{disease_name}"
+                            if "白內障" in status_text:
+                                color = "#EF6C00"
+                            elif "結膜炎" in status_text:
+                                color = "#D32F2F"
+                    
+                    try:
+                        dt_obj = datetime.fromtimestamp(r.timestamp)
+                        date_str = dt_obj.strftime("%Y/%m/%d")
+                    except:
+                        date_str = str(r.timestamp)
+
+                    # --- 動態生成 UI ---
+                    # 1. 深度複製一份 Row 的結構
+                    current_row = copy.deepcopy(row_template)
+                    # 2. 將 Dict 轉字串以便進行 replace
+                    row_str = json.dumps(current_row)
+                    # 3. 執行替換
+                    row_str = row_str.replace("PLACEHOLDER_DATE", date_str)
+                    row_str = row_str.replace("PLACEHOLDER_STATUS", status_text)
+                    row_str = row_str.replace("PLACEHOLDER_COLOR", color)
+                    row_str = row_str.replace("PLACEHOLDER_REPORT_ID", str(r.report_id))
+                    
+                    # 4. 轉回 Dict 並加入容器
+                    final_row = json.loads(row_str)
+                    container_contents.append(final_row)
+                    
+                    # 入分隔線 separator，讓列表更清楚
+                    container_contents.append({"type": "separator", "margin": "md"})
+
+            # E. 發送訊息
+            line_service.api.reply_message(
+                event.reply_token,
+                FlexSendMessage(alt_text="您的歷史檢查紀錄", contents=bubble_container)
+            )
+            
         except Exception as e:
-            logger.error(f"查詢歷史失敗: {e}")
+            logger.error(f"查詢歷史失敗 (JSON Template): {e}")
             line_service.reply_text(event.reply_token, "目前無法讀取紀錄，請稍後再試。")
         return
 
@@ -188,47 +234,6 @@ def handle_text_message(event):
             line_service.reply_text(event.reply_token, "暫時無法載入衛教資訊。")
         return
 
-    # 5-1. [衛教：白內障] (對應 health_education_menu.json 的按鈕文字)
-    if text == "衛教：白內障":
-        try:
-            bubble = line_service._load_template("education_cataract.json")
-            line_service.api.reply_message(
-                event.reply_token,
-                FlexSendMessage(alt_text="認識白內障", contents=bubble)
-            )
-        except Exception as e:
-            logger.error(f"白內障衛教載入失敗: {e}")
-        return
-
-    # 5-2. [衛教：結膜炎]
-    if text == "衛教：結膜炎":
-        try:
-            bubble = line_service._load_template("education_conjunctivitis.json")
-            line_service.api.reply_message(
-                event.reply_token,
-                FlexSendMessage(alt_text="認識結膜炎", contents=bubble)
-            )
-        except Exception as e:
-            logger.error(f"結膜炎衛教載入失敗: {e}")
-        return
-
-    # 5-3. [衛教：預防保健]
-    if "預防保健" in text and "衛教" in text:
-        try:
-            # 嘗試載入檔案
-            template_name = "education_prevention.json"
-            bubble = line_service._load_template(template_name)
-            
-            line_service.api.reply_message(
-                event.reply_token,
-                FlexSendMessage(alt_text="日常預防保健", contents=bubble)
-            )
-        except Exception as e:
-            # 印出錯誤並回覆使用者
-            logger.error(f"預防保健衛教載入失敗: {e}")
-            line_service.reply_text(event.reply_token, f"抱歉，衛教檔案載入失敗。")
-        return
-
     # 6. [症狀問答] (啟動文字問診流程)
     if text == "症狀問答":
         # 設定問卷檔案與 ID
@@ -251,12 +256,17 @@ def handle_text_message(event):
             }
 
             # 3. 發送第一題 (Q1)
-            first_q = next((q for q in survey_data["questions"] if q["id"] == "Q1"), None)
+            questions = survey_data.get("questions", {})
+            
+            # 用 Key 取得第一題 (優先讀取 json 裡的 start_question 設定，預設 Q1)
+            start_q_id = survey_data.get("start_question", "Q1")
+            first_q = questions.get(start_q_id)
             
             if first_q:
-                line_service.send_question(event.reply_token, first_q)
+                # 必須傳入 survey_id
+                line_service.send_question(event.reply_token, first_q, survey_id=survey_id)
             else:
-                line_service.reply_text(event.reply_token, "問卷資料異常 (找不到 Q1)。")
+                line_service.reply_text(event.reply_token, "問卷格式錯誤 (找不到 Q1)。")
 
         except Exception as e:
             logger.error(f"症狀問答啟動失敗: {e}")
@@ -294,7 +304,6 @@ def handle_text_message(event):
 
         try:
             # 2. 讀取問卷 JSON
-            # 使用 line_service 內部的讀取方法 (或者也可以用 json.load)
             survey_data = line_service._load_json(Path(f"assets/questionnaires/{survey_filename}"))
             
             if not survey_data:
@@ -308,10 +317,12 @@ def handle_text_message(event):
             }
 
             # 4. 發送第一題 (通常是 id="Q1")
-            first_q = next((q for q in survey_data["questions"] if q["id"] == "Q1"), None)
+            questions = survey_data.get("questions", {})
+            start_q_id = survey_data.get("start_question", "Q1")
+            first_q = questions.get(start_q_id)
             
             if first_q:
-                line_service.send_question(event.reply_token, first_q)
+                line_service.send_question(event.reply_token, first_q, survey_id=survey_id)
             else:
                 line_service.reply_text(event.reply_token, "問卷格式錯誤 (找不到 Q1)。")
 
@@ -340,9 +351,10 @@ def handle_text_message(event):
             }
 
             # 發送第一題
-            first_q = next((q for q in survey_data["questions"] if q["id"] == "Q1"), None)
+            start_q_id = survey_data.get("start_question", "Q1")
+            first_q = questions.get(start_q_id)
             if first_q:
-                line_service.send_question(event.reply_token, first_q)
+                line_service.send_question(event.reply_token, first_q, survey_id=survey_id)
             else:
                 line_service.reply_text(event.reply_token, "問卷啟動失敗。")
 
@@ -367,14 +379,14 @@ def handle_text_message(event):
                 # 使用 DiagnosisStatus Enum 比對 (Issue from screenshots)
                 if r.cnn_result:
                     if r.cnn_result.status == DiagnosisStatus.NOT_DETECTED:
-                        status_text = "正常 / 低風險"
+                        status_text = "低風險"
                         color = "#1DB446"  # 綠色
                     else:
                         # 顯示病症名稱 (例如: 疑似白內障)
                         disease_map = {
                             "Cataract": "白內障",
                             "Conjunctivitis": "結膜炎",
-                            "None": "正常"
+                            "None": "低風險"
                         }
                         # 取得英文 enum 值 (str)
                         disease_enum_val = r.cnn_result.disease.value if hasattr(r.cnn_result.disease, "value") else str(r.cnn_result.disease)
@@ -453,22 +465,22 @@ def handle_text_message(event):
         
         return
 
-    # --- 3. 一般對話 (LLM) ---
-    # 預設使用 doctor，若使用者有設定過則用設定的
-    current_persona = user_personas.get(user_id, "doctor")
-
-    # 限制字數
-    if len(text) > 10:
-        line_service.reply_text(event.reply_token, "請將字數精簡在 10 字以內！")
-        return
-    
-    # 產生回應
+    # --- 3. 非指令的文字處理 (Default Fallback) ---
     try:
-        reply = llm_service.generate_response(text, persona=current_persona)
-        line_service.reply_text(event.reply_token, reply)
+        fallback_path = Path("assets/fallback_messages.json")
+        reply_text = "抱歉，我不太理解您的意思。\n請使用下方選單功能操作。" # 預設
+
+        if fallback_path.exists():
+            data = line_service._load_json(fallback_path)
+            messages = data.get("messages", [])
+            if messages:
+                reply_text = random.choice(messages)
+        
+        line_service.reply_text(event.reply_token, reply_text)
+
     except Exception as e:
-        logger.error(f"LLM 回應失敗: {e}")
-        line_service.reply_text(event.reply_token, "AI 助手目前忙碌中，請稍後再試。")
+        logger.error(f"讀取訊息失敗: {e}")
+        line_service.reply_text(event.reply_token, "請使用下方選單功能。")
 
 # (B) 處理圖片訊息 (觸發 YOLO)
 @handler.add(MessageEvent, message=ImageMessage)
@@ -507,198 +519,171 @@ def handle_postback(event):
     data = event.postback.data
     logger.info(f"收到 Postback [{user_id}]: {data}")
 
-    # 1. 處理單純字串指令 
-    if data == "menu":
-        try:
-            # 載入主選單
-            bubble = line_service._load_template("health_education_menu.json")
-            line_service.api.reply_message(
-                event.reply_token,
-                FlexSendMessage(alt_text="眼科衛教資訊選單", contents=bubble)
-            )
-        except Exception as e:
-            logger.error(f"返回選單失敗: {e}")
-            line_service.reply_text(event.reply_token, "選單載入失敗。")
-        return
-
-    # 2. 解析參數型指令 (e.g., action=ask_llm)
     try:
         params = dict(x.split('=') for x in data.split('&'))
     except Exception as e:
-        logger.error(f"Postback 參數解析失敗: {data}, Error: {e}")
-        return
+        # data 可能不是 key=value 格式 (例如 "menu")
+        params = {}
+        if data == "menu":
+             # 簡單處理 menu
+             try:
+                bubble = line_service._load_template("health_education_menu.json")
+                line_service.api.reply_message(event.reply_token, FlexSendMessage(alt_text="選單", contents=bubble))
+             except: pass
+             return
 
     action = params.get("action")
 
     # =================================================
-    # 🆕 更多衛教 (設定狀態)
+    # 1. 記錄問卷答案 (若有 survey & value)
     # =================================================
-    if action == "ask_llm":
-        # 1. 標記該使用者進入 "RAG 模式"
-        user_rag_state[user_id] = True 
+    if "survey" in params and "value" in params:
+        survey_id = params.get("survey")
+        # 過濾掉控制參數
+        answer_data = {k: v for k, v in params.items() if k not in ["survey", "next", "action"]}
         
-        # 2. 引導輸入
-        msg = "請輸入您想詢問的衛教內容 ( 10 字內) 📝\n\n例如：「白內障術後保養」、「眼睛乾澀怎麼辦」"
+        if user_id not in user_survey_state:
+             user_survey_state[user_id] = {"current_survey": survey_id, "answers": []}
+        
+        user_survey_state[user_id]["answers"].append(answer_data)
+
+    # =================================================
+    # 2. Action 分流處理
+    # =================================================
+
+    # (A) 問卷提交 -> 產生 LLM 報告
+    if action == "submit_survey":
+        survey_id = params.get("survey")
+        try:
+            answers = user_survey_state.get(user_id, {}).get("answers", [])
+            answers_str = "\n".join([f"- {a}" for a in answers])
+            
+            prompt = llm_service.get_task_prompt(
+                "questionnaire_summary", 
+                survey_id=survey_id, 
+                answers_str=answers_str
+            )
+            
+            current_persona = user_personas.get(user_id, "doctor")
+            reply = llm_service.generate_response(prompt, persona=current_persona)
+            line_service.reply_text(event.reply_token, reply)
+            
+        except Exception as e:
+            logger.error(f"問卷報告產生失敗: {e}")
+            line_service.reply_text(event.reply_token, "產生報告時發生錯誤，但您的回答紀錄已保存。")
+        
+        # 清除狀態
+        if user_id in user_survey_state:
+            del user_survey_state[user_id]
+        return
+
+    # (B) 啟動 RAG 衛教諮詢
+    elif action == "ask_llm":
+        user_rag_state[user_id] = True 
+        msg = "請輸入您想詢問的衛教內容 (10 字內) 📝\n\n例如：「白內障術後保養」"
         line_service.reply_text(event.reply_token, msg)
         return
 
-    # =================================================
-    # 🔀 分支 A: 圖片診斷確認 (Action: confirm_cnn)
-    # =================================================
-    if action == "confirm_cnn":
+    # (C) 圖片診斷確認 (CNN)
+    elif action == "confirm_cnn":
         report_id = params.get("report_id")
-        
         if report_id:
             try:
-                # 1. 從 DB 撈回報告
                 report = db_service.get_report(report_id)
                 if not report:
-                    line_service.reply_text(event.reply_token, "找不到此診斷紀錄，請重新上傳。")
+                    line_service.reply_text(event.reply_token, "找不到此診斷紀錄。")
                     return
-
-                # 2. 執行 Phase 2 (CNN)
+                
                 final_report = image_service.run_cnn_phase(report)
-                
-                # 3. 更新 DB
                 db_service.save_report(final_report)
-                
-                # 4. 發送最終結果
                 line_service.send_analysis_result(event.reply_token, final_report)
 
             except Exception as e:
                 logger.error(f"CNN 分析失敗: {e}")
-                line_service.reply_text(event.reply_token, "分析過程中發生錯誤，請稍後再試。")
-        else:
-            logger.error("Postback 缺少 report_id")
+                line_service.reply_text(event.reply_token, "分析過程中發生錯誤。")
+        return
 
-    # =================================================
-    # 🔀 分支 B: 問卷回答 (特徵: 包含 survey 與 next)
-    # =================================================
-    elif "survey" in params and "next" in params:
-        survey_id = params.get("survey")
-        next_q_id = params.get("next")
-        
-        # 1. 記錄答案
-        # 過濾掉控制參數 (survey, next)，只留真正有意義的 key/value
-        answer_data = {k: v for k, v in params.items() if k not in ["survey", "next"]}
-        
-        # 確保使用者狀態存在 (使用全域變數 user_survey_state)
-        if user_id not in user_survey_state:
-             user_survey_state[user_id] = {"current_survey": survey_id, "answers": []}
-        
-        # 加入這題的答案
-        user_survey_state[user_id]["answers"].append(answer_data)
-        
-        # 2. 判斷下一步
-        if next_q_id == "result":
-            # === (B-1) 問卷結束 -> 產生 LLM 報告 ===
-            try:
-                # 取得累積的所有答案
-                answers = user_survey_state[user_id]["answers"]
-                # 將答案轉為字串給 LLM 看
-                answers_str = "\n".join([f"- {a}" for a in answers])
-                
-                # 使用 get_task_prompt 從 JSON 讀取設定
-                prompt = llm_service.get_task_prompt(
-                    "questionnaire_summary", 
-                    survey_id=survey_id, 
-                    answers_str=answers_str
-                )
-                
-                # 呼叫 LLM (使用當前設定的角色，或強制用 doctor)
-                current_persona = user_personas.get(user_id, "doctor")
-                reply = llm_service.generate_response(prompt, persona=current_persona)
-                
-                line_service.reply_text(event.reply_token, reply)
-                
-            except Exception as e:
-                logger.error(f"問卷分析失敗: {e}")
-                line_service.reply_text(event.reply_token, "產生報告時發生錯誤，但您的回答紀錄已保存。")
-            
-            # 清除狀態 (重置)
-            if user_id in user_survey_state:
-                del user_survey_state[user_id]
-
-        else:
-            # === (B-2) 繼續下一題 (Next Question) ===
-            try:
-                # 讀取對應的 JSON 檔
-                filename = f"{survey_id}.json"
-                survey_data = line_service._load_json(Path(f"assets/questionnaires/{filename}"))
-                # 使用 next() 搭配 generator 尋找下一題物件，搜尋 id 符合的題目
-                next_q = next((q for q in survey_data.get("questions", []) if q["id"] == next_q_id), None)
-                
-                if next_q:
-                    line_service.send_question(event.reply_token, next_q)
-                else:
-                    logger.error(f"找不到題目 ID: {next_q_id}")
-                    line_service.reply_text(event.reply_token, "系統錯誤：找不到下一題。")
-                    
-            except Exception as e:
-                logger.error(f"問卷切換失敗: {e}")
-                line_service.reply_text(event.reply_token, "讀取問卷時發生錯誤。")
-
-    # =================================================
-    # 🔀 分支 C: 其他操作 (如 "重新檢測" action=retry)
-    # =================================================
-    elif action == "retry":
-        line_service.reply_text(event.reply_token, "請重新上傳一張清楚的眼睛照片。")
-    
-    # === 衛教頁面 ===
-    # 1. 返回衛教主選單 (data="menu")
-    elif data == "menu":
-        try:
-            bubble = line_service._load_template("health_education_menu.json")
-            line_service.api.reply_message(
-                event.reply_token,
-                FlexSendMessage(alt_text="眼科衛教資訊選單", contents=bubble)
-            )
-        except Exception as e:
-            logger.error(f"返回選單失敗: {e}")
-
-    # 2. 觸發拍照提示 (data="camera") -> 來自結膜炎衛教頁面
-    elif data == "camera":
-        line_service.reply_text(event.reply_token, "請傳送「單一」眼睛照片，並確保對焦不模糊📸")
-
-    # 3. 觸發白內障問卷 (data="cataract_ques") -> 來自白內障衛教頁面
-    elif data == "cataract_ques":
-        # 這裡直接複用啟動問卷的邏輯
-        survey_filename = "cataract.json"
-        try:
-            survey_data = line_service._load_json(Path(f"assets/questionnaires/{survey_filename}"))
-            if survey_data:
-                # 初始化狀態
-                user_survey_state[user_id] = {
-                    "current_survey": "cataract",
-                    "answers": []
-                }
-                # 發送第一題
-                first_q = next((q for q in survey_data["questions"] if q["id"] == "Q1"), None)
-                if first_q:
-                    line_service.send_question(event.reply_token, first_q)
-            else:
-                line_service.reply_text(event.reply_token, "問卷維護中。")
-        except Exception as e:
-            logger.error(f"Postback 啟動問卷失敗: {e}")
-
-    # === 查看歷史報告詳細內容 ===
+    # (D) 查看歷史報告
     elif action == "view_report":
         report_id = params.get("report_id")
         if report_id:
             try:
-                # 1. 從 DB 撈取完整報告
                 report = db_service.get_report(report_id)
                 if report:
                     line_service.send_analysis_result(event.reply_token, report)
                 else:
-                    line_service.reply_text(event.reply_token, "找不到該筆報告資料 (可能已過期)。")
-            except Exception as e:
-                logger.error(f"讀取報告失敗: {e}")
-        else:
-            logger.error("缺少 report_id")
+                    line_service.reply_text(event.reply_token, "找不到該筆報告資料。")
+            except: pass
+        return
+
+    # (E) 重新檢測
+    elif action == "retry":
+        line_service.reply_text(event.reply_token, "請重新上傳一張清楚的眼睛照片。")
+        return
+
+    # (F) 問卷下一題 (若沒有命中 submit_survey 但有 next)
+    elif "survey" in params and "next" in params:
+        survey_id = params.get("survey")
+        next_q_id = params.get("next")
+        
+        try:
+            filename = f"{survey_id}.json"
+            survey_data = line_service._load_json(Path(f"assets/questionnaires/{filename}"))
+            questions = survey_data.get("questions", {})
+            next_q = questions.get(next_q_id)
+            
+            if next_q:
+                line_service.send_question(event.reply_token, next_q, survey_id=survey_id)
+            else:
+                line_service.reply_text(event.reply_token, "系統錯誤：找不到下一題。")
+        except Exception as e:
+            logger.error(f"問卷切換失敗: {e}")
+        return
     
+    # (g) 顯示衛教詳情 
+    if action == "view_education":
+        topic = params.get("topic")
+        
+        # 建立 Topic 與 JSON 檔名的對照表
+        template_map = {
+            "cataract": "education_cataract.json",
+            "conjunctivitis": "education_conjunctivitis.json",
+            "prevention": "education_prevention.json",
+            "白內障": "education_cataract.json",
+            "結膜炎": "education_conjunctivitis.json"
+        }
+        
+        # 取得對應的檔名
+        filename = template_map.get(topic)
+        
+        if filename:
+            try:
+                # 載入對應的 JSON 樣板
+                bubble = line_service._load_template(filename)
+                
+                # 根據 topic 設定 alt_text (推播通知預覽文字)
+                alt_text_map = {
+                    "cataract": "認識白內障",
+                    "conjunctivitis": "認識結膜炎",
+                    "prevention": "日常預防保健"
+                }
+                alt_text = alt_text_map.get(topic, "衛教資訊")
+
+                line_service.api.reply_message(
+                    event.reply_token,
+                    FlexSendMessage(alt_text=alt_text, contents=bubble)
+                )
+            except Exception as e:
+                logger.error(f"衛教詳情載入失敗 ({topic}): {e}")
+                line_service.reply_text(event.reply_token, "暫時無法載入該衛教資訊。")
+        else:
+            line_service.reply_text(event.reply_token, "找不到此衛教主題。")
+        
+        return
+
+    # 其他未處理 Action
     else:
-        logger.warning(f"未知的 Postback action: {params}")
+        logger.debug(f"未處理的 Postback: {params}")
 
 # (D) 處理加入好友事件 (發送 Welcome Card)
 @handler.add(FollowEvent)

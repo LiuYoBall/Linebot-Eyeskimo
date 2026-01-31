@@ -38,8 +38,8 @@
     "Q5": {
       "text": "近視或老花度數是否在短時間內出現明顯變化？",
       "options": [
-        { "label": "是", "value": "yes", "next": "END" },
-        { "label": "否", "value": "no", "next": "END" }
+        { "label": "是", "value": "yes", "next": "result" },
+        { "label": "否", "value": "no", "next": "result" }
       ]
     }
   }

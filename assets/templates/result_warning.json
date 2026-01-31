@@ -5,7 +5,7 @@
     "type": "box",
     "layout": "vertical",
     "paddingAll": "16px",
-    "backgroundColor": "PLACEHOLDER_HEADER_BG", 
+    "backgroundColor": "#FFF5F5", 
     "contents": [
       {
         "type": "text",
@@ -13,6 +13,13 @@
         "weight": "bold",
         "size": "md",
         "color": "#333333"
+      },
+      {
+        "type": "text",
+        "text": "報告編號：PLACEHOLDER_REPORT_ID",
+        "size": "xxs",
+        "color": "#AAAAAA",
+        "margin": "4px"
       }
     ]
   },
@@ -23,37 +30,58 @@
     "contents": [
       {
         "type": "box",
-        "layout": "horizontal",
+        "layout": "vertical",
+        "paddingAll": "2px",
+        "spacing": "xs",
         "contents": [
           {
-            "type": "image",
-            "url": "PLACEHOLDER_IMG_MAIN",
-            "size": "full",
-            "aspectRatio": "1:1",
-            "aspectMode": "cover",
-            "flex": 2,
-            "action": {"type": "uri", "uri": "PLACEHOLDER_IMG_MAIN"}
-          },
-          {
             "type": "box",
-            "layout": "vertical",
-            "flex": 1,
+            "layout": "horizontal",
+            "spacing": "xs",
             "contents": [
               {
                 "type": "image",
-                "url": "PLACEHOLDER_IMG_SUB1",
+                "url": "PLACEHOLDER_IMG_ORIGINAL_BOXED",
                 "size": "full",
                 "aspectRatio": "1:1",
                 "aspectMode": "cover",
-                "action": {"type": "uri", "uri": "PLACEHOLDER_IMG_SUB1"}
+                "flex": 1,
+                "action": { "type": "uri", "uri": "PLACEHOLDER_IMG_ORIGINAL_BOXED" }
               },
               {
                 "type": "image",
-                "url": "PLACEHOLDER_IMG_SUB2",
+                "url": "PLACEHOLDER_IMG_CROP",
                 "size": "full",
                 "aspectRatio": "1:1",
                 "aspectMode": "cover",
-                "action": {"type": "uri", "uri": "PLACEHOLDER_IMG_SUB2"}
+                "flex": 1,
+                "action": { "type": "uri", "uri": "PLACEHOLDER_IMG_CROP" }
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "spacing": "xs",
+            "contents": [
+              {
+                "type": "image",
+                "url": "PLACEHOLDER_IMG_CAM",
+                "size": "full",
+                "aspectRatio": "1:1",
+                "aspectMode": "cover",
+                "flex": 1,
+                "action": { "type": "uri", "uri": "PLACEHOLDER_IMG_CAM" }
+              },
+              {
+                "type": "image",
+                "url": "PLACEHOLDER_IMG_CHART",
+                "size": "full",
+                "aspectRatio": "1:1",
+                "aspectMode": "cover",
+                "backgroundColor": "#FFFFFF",
+                "flex": 1,
+                "action": { "type": "uri", "uri": "PLACEHOLDER_IMG_CHART" }
               }
             ]
           }
@@ -107,43 +135,30 @@
             "margin": "12px",
             "wrap": true
           },
-          {
-            "type": "separator",
-            "margin": "20px"
-          },
+          { "type": "separator", "margin": "20px" },
           {
             "type": "box",
             "layout": "vertical",
             "margin": "10px",
+            "spacing": "md",
             "contents": [
               {
                 "type": "button",
-                "action": {
-                  "type": "message",
-                  "label": "了解症狀詳情",
-                  "text": "我想了解PLACEHOLDER_DISEASE_NAME的資訊"
+                "action": { 
+                  "type": "postback", 
+                  "label": "了解症狀詳情", 
+                  "data": "action=view_education&topic=PLACEHOLDER_DISEASE_NAME" 
                 },
-                "style": "link",
-                "gravity": "center",
-                "color": "#333333",
+                "style": "secondary",
+                "color": "#666666",
                 "height": "sm"
-              },
-              {
-                "type": "separator"
               },
               {
                 "type": "button",
-                "action": {
-                  "type": "message",
-                  "label": "填寫評估問卷",
-                  "text": "PLACEHOLDER_SURVEY_CMD"
-                },
-                "style": "link",
+                "action": { "type": "message", "label": "填寫評估問卷", "text": "PLACEHOLDER_SURVEY_CMD" },
+                "style": "primary",
                 "color": "PLACEHOLDER_THEME_COLOR",
                 "height": "sm"
-              },
-              {
-                "type": "separator"
               }
             ]
           }
@@ -158,21 +173,18 @@
     "contents": [
       {
         "type": "button",
-        "action": {
-          "type": "postback",
-          "label": "重新檢測",
-          "data": "action=retry"
-        },
-        "style": "secondary",
-        "height": "sm"
+        "action": { "type": "postback", "label": "重新檢測", "data": "action=retry" },
+        "style": "link",
+        "height": "sm",
+        "color": "#AAAAAA"
       },
       {
         "type": "text",
-        "text": "本結果僅供參考，非醫療診斷，請以醫師判斷為主。",
+        "text": "本結果僅供參考，非醫療診斷。",
         "size": "xxs",
-        "color": "#AAAAAA",
+        "color": "#CCCCCC",
         "align": "center",
-        "margin": "12px"
+        "margin": "sm"
       }
     ]
   }

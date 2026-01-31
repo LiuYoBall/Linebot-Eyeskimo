@@ -3,7 +3,7 @@
 .gitignore
 .dockerignore
 *.md
-         
+favicon.ico         
 
 # ========== gitignore =========
 # 忽略 Python 快取

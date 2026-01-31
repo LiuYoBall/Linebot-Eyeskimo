@@ -27,7 +27,7 @@
   "body": {
     "type": "box",
     "layout": "vertical",
-    "spacing": "none",
+    "spacing": "md",
     "contents": [
       {
         "type": "text",
@@ -35,8 +35,7 @@
         "size": "sm",
         "color": "#666666",
         "align": "center",
-        "wrap": true,
-        "margin": "md"
+        "wrap": true
       }
     ]
   },
