@@ -3,98 +3,92 @@
   "size": "mega",
   "hero": {
     "type": "image",
-    "url": "https://images.unsplash.com/photo-1599852233667-17559e21df91?auto=format&fit=crop&w=800&q=80",
+    "url": "https://raw.githubusercontent.com/szutinglin/line_bot_Eye_test/main/hero_conju.jpg",
     "size": "full",
-    "aspectRatio": "20:13",
+    "aspectRatio": "16:9",
     "aspectMode": "cover"
   },
   "body": {
     "type": "box",
     "layout": "vertical",
+    "spacing": "md",
+    "paddingAll": "16px",
     "contents": [
       {
-        "type": "text",
-        "text": "🦠 認識結膜炎",
-        "weight": "bold",
-        "size": "xl",
-        "color": "#D32F2F"
-      },
-      {
-        "type": "text",
-        "text": "俗稱紅眼症，感染或過敏引起",
-        "weight": "bold",
-        "size": "xs",
-        "color": "#aaaaaa",
-        "margin": "xs"
-      },
-      {
-        "type": "separator",
-        "margin": "md"
-      },
-      {
         "type": "box",
-        "layout": "vertical",
-        "margin": "md",
+        "layout": "baseline",
         "spacing": "sm",
         "contents": [
           {
             "type": "text",
-            "text": "分辨類型：",
+            "text": "認識結膜炎",
             "weight": "bold",
-            "size": "sm",
-            "color": "#333333"
-          },
-          {
-            "type": "box",
-            "layout": "baseline",
-            "contents": [
-              { "type": "text", "text": "細菌性：", "weight": "bold", "size": "sm", "flex": 2 },
-              { "type": "text", "text": "分泌物多且黏稠，黃綠色", "size": "sm", "color": "#666666", "flex": 5, "wrap": true }
-            ]
-          },
-          {
-            "type": "box",
-            "layout": "baseline",
-            "contents": [
-              { "type": "text", "text": "病毒性：", "weight": "bold", "size": "sm", "flex": 2 },
-              { "type": "text", "text": "分泌物水狀，傳染力強", "size": "sm", "color": "#666666", "flex": 5, "wrap": true }
-            ]
-          },
-          {
-            "type": "box",
-            "layout": "baseline",
-            "contents": [
-              { "type": "text", "text": "過敏性：", "weight": "bold", "size": "sm", "flex": 2 },
-              { "type": "text", "text": "非常癢，季節交替常見", "size": "sm", "color": "#666666", "flex": 5, "wrap": true }
-            ]
+            "size": "xl",
+            "color": "#D32F2F",
+            "flex": 0,
+            "wrap": true
           }
         ]
+      },
+      {
+        "type": "text",
+        "text": "俗稱紅眼症，可能與病毒/ 細菌感染或過敏反應有關，常見為眼睛發紅與不適感。",
+        "size": "sm",
+        "wrap": true,
+        "color": "#666666"
+      },
+      {
+        "type": "separator"
+      },
+      {
+        "type": "text",
+        "text": "常見症狀",
+        "weight": "bold",
+        "size": "md"
+      },
+      {
+        "type": "text",
+        "text": "• 眼睛發紅或腫脹\n• 分泌物較多（黏稠或水樣）\n• 眼睛搔癢、疼痛\n• 眼睛內有異物感",
+        "size": "sm",
+        "wrap": true,
+        "color": "#333333"
       }
     ]
   },
   "footer": {
     "type": "box",
     "layout": "vertical",
-    "spacing": "sm",
+    "spacing": "md",
+    "paddingAll": "16px",
     "contents": [
       {
         "type": "button",
         "style": "primary",
-        "color": "#D32F2F",
+        "color": "#F57C00", 
+        "height": "md",
         "action": {
-          "type": "message",
-          "label": "症狀嚴重度評估",
-          "text": "結膜炎檢測"
+          "type": "postback",
+          "label": "更多衛教 (AI 諮詢)",
+          "data": "action=ask_llm"
         }
       },
       {
         "type": "button",
-        "style": "link",
+        "style": "secondary",
+        "height": "md",
         "action": {
-          "type": "message",
-          "label": "如何舒緩眼睛癢？",
-          "text": "請問如何舒緩眼睛癢"
+          "type": "postback",
+          "label": "返回選單",
+          "data": "menu"
         }
+      },
+      {
+        "type": "text",
+        "text": "本內容僅供衛教參考，非醫療診斷；如有不適請諮詢眼科醫師。",
+        "size": "xs",
+        "wrap": true,
+        "align": "center",
+        "color": "#999999"
       }
     ]
   }

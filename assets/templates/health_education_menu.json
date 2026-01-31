@@ -6,7 +6,7 @@
       "size": "kilo",
       "hero": {
         "type": "image",
-        "url": "https://images.unsplash.com/photo-1585640283738-953e5b1532f8?auto=format&fit=crop&w=600&q=80",
+        "url": "https://raw.githubusercontent.com/szutinglin/line_bot_Eye_test/main/hero_cata.jpg",
         "size": "full",
         "aspectRatio": "4:3",
         "aspectMode": "cover"
@@ -37,7 +37,7 @@
       "size": "kilo",
       "hero": {
         "type": "image",
-        "url": "https://images.unsplash.com/photo-1599852233667-17559e21df91?auto=format&fit=crop&w=600&q=80",
+        "url": "https://raw.githubusercontent.com/szutinglin/line_bot_Eye_test/main/hero_conju.jpg",
         "size": "full",
         "aspectRatio": "4:3",
         "aspectMode": "cover"
@@ -46,8 +46,8 @@
         "type": "box",
         "layout": "vertical",
         "contents": [
-          { "type": "text", "text": "結膜炎護理", "weight": "bold", "size": "lg" },
-          { "type": "text", "text": "眼睛紅腫癢？分辨細菌性與過敏性結膜炎的差異。", "size": "sm", "color": "#666666", "wrap": true, "margin": "sm" }
+          { "type": "text", "text": "認識結膜炎", "weight": "bold", "size": "lg" },
+          { "type": "text", "text": "眼睛紅腫癢？了解結膜炎成因與常見症狀", "size": "sm", "color": "#666666", "wrap": true, "margin": "sm" }
         ]
       },
       "footer": {
@@ -68,7 +68,7 @@
       "size": "kilo",
       "hero": {
         "type": "image",
-        "url": "https://images.unsplash.com/photo-1516574187841-693018f3778f?auto=format&fit=crop&w=600&q=80",
+        "url": "https://raw.githubusercontent.com/szutinglin/line_bot_Eye_test/main/hero_eye_guard.jpg",
         "size": "full",
         "aspectRatio": "4:3",
         "aspectMode": "cover"

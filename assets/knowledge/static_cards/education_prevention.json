@@ -1,50 +1,76 @@
 {
   "type": "bubble",
-  "size": "mega",
+  "direction": "ltr",
   "hero": {
     "type": "image",
-    "url": "https://images.unsplash.com/photo-1516574187841-693018f3778f?auto=format&fit=crop&w=800&q=80",
+    "url": "https://raw.githubusercontent.com/szutinglin/line_bot_Eye_test/main/hero_eye_guard.jpg",
     "size": "full",
-    "aspectRatio": "20:13",
+    "aspectRatio": "16:9",
     "aspectMode": "cover"
   },
   "body": {
     "type": "box",
     "layout": "vertical",
+    "paddingAll": "16px",
     "contents": [
       {
         "type": "text",
-        "text": "🛡️ 護眼小秘訣",
+        "text": "護眼小秘訣",
         "weight": "bold",
-        "size": "xl",
-        "color": "#0288D1"
+        "size": "lg",
+        "color": "#0288D1",
+        "margin": "md"
       },
       {
         "type": "text",
         "text": "預防勝於治療，日常保養指南",
-        "weight": "bold",
         "size": "xs",
         "color": "#aaaaaa",
-        "margin": "xs"
+        "wrap": true,
+        "margin": "xs",
+        "weight": "bold"
       },
       {
         "type": "separator",
         "margin": "md"
       },
       {
+        "type": "text",
+        "text": "日常建議",
+        "weight": "bold",
+        "size": "md",
+        "margin": "md"
+      },
+      {
         "type": "box",
         "layout": "vertical",
-        "margin": "md",
         "spacing": "sm",
+        "margin": "sm",
         "contents": [
-          { "type": "text", "text": "1. 3010 法則", "weight": "bold", "size": "sm", "color": "#333333" },
-          { "type": "text", "text": "用眼 30 分鐘，休息 10 分鐘。", "size": "sm", "color": "#666666", "margin": "xs" },
-          
-          { "type": "text", "text": "2. 多吃護眼食物", "weight": "bold", "size": "sm", "color": "#333333", "margin": "md" },
-          { "type": "text", "text": "深綠色蔬菜、葉黃素、魚油。", "size": "sm", "color": "#666666", "margin": "xs" },
-
-          { "type": "text", "text": "3. 定期檢查", "weight": "bold", "size": "sm", "color": "#333333", "margin": "md" },
-          { "type": "text", "text": "每年進行一次完整的眼底檢查。", "size": "sm", "color": "#666666", "margin": "xs" }
+          {
+            "type": "text",
+            "text": "• ⏱ 每 20 分鐘休息 20 秒，遠望放鬆",
+            "size": "sm",
+            "wrap": true
+          },
+          {
+            "type": "text",
+            "text": "• 📱 螢幕距離適中，避免過暗或過亮",
+            "size": "sm",
+            "wrap": true
+          },
+          {
+            "type": "text",
+            "text": "• 充足睡眠，減少乾眼與疲勞",
+            "size": "sm",
+            "wrap": true
+          },
+          {
+            "type": "text",
+            "text": "• 若出現紅、痛、視力改變，應就醫檢查",
+            "size": "sm",
+            "wrap": true
+          }
         ]
       }
     ]
@@ -59,10 +85,28 @@
         "style": "primary",
         "color": "#0288D1",
         "action": {
-          "type": "message",
-          "label": "設定休息提醒 (模擬)",
-          "text": "我想設定護眼提醒"
+          "type": "postback",
+          "label": "更多衛教 (AI 諮詢)",
+          "data": "action=ask_llm"
         }
+      },
+      {
+        "type": "button",
+        "style": "secondary",
+        "action": {
+          "type": "postback",
+          "label": "返回選單",
+          "data": "menu"
+        }
+      },
+      {
+        "type": "text",
+        "text": "本內容僅供日常衛教參考，非醫療診斷",
+        "size": "xs",
+        "color": "#999999",
+        "wrap": true,
+        "margin": "md",
+        "align": "center"
       }
     ]
   }

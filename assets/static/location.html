@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正在跳轉地圖...</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif; background-color: #f0f0f0; }
+        .loader { text-align: center; }
+        p { color: #666; margin-top: 10px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="loader">
+        <svg width="50" height="50" viewBox="0 0 50 50">
+            <circle cx="25" cy="25" r="20" fill="none" stroke="#06c755" stroke-width="5" stroke-dasharray="80" stroke-dashoffset="0">
+                <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/>
+            </circle>
+        </svg>
+        <p id="status">正在開啟 Google Maps...</p>
+    </div>
+
+    <script>
+        // 設定您的 LIFF ID
+        const LIFF_ID = "2009014525-VkA3SJ5D"; 
+
+        async function main() {
+            try {
+                // 初始化
+                await liff.init({ liffId: LIFF_ID });
+                
+                // 檢查登入狀態
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                    return;
+                }
+
+                // 取得位置
+                navigator.geolocation.getCurrentPosition(
+                    successCallback, 
+                    errorCallback, 
+                    { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+                );
+
+            } catch (err) {
+                document.getElementById('status').innerText = "初始化錯誤";
+            }
+        }
+
+        function successCallback(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            // 1. 使用 Google Maps 官方 API 連結格式 (比舊格式更容易喚起 APP)
+            // query=眼科診所 : 關鍵字
+            // center=經,緯 : 定位中心
+            const mapUrl = `https://www.google.com/maps/search/?api=1&query=眼科診所&center=${lat},${lon}`;
+
+            // 2. 開啟外部連結
+            liff.openWindow({
+                url: mapUrl,
+                external: true
+            });
+
+            // 3. 強制關閉視窗的策略
+            // 我們設定 1 秒的延遲。這很關鍵：
+            // - 延遲太短 (0ms)：openWindow 指令還沒傳到 LINE App，視窗就被關閉了，導致地圖沒開。
+            // - 延遲適中 (1000ms)：LINE App 收到開啟指令 -> 切換 APP -> 
+            //   使用者看完地圖回來 -> 瀏覽器恢復執行 -> 執行 closeWindow()。
+            setTimeout(() => {
+                liff.closeWindow();
+            }, 1000);
+        }
+
+        function errorCallback(error) {
+            let msg = "無法取得位置";
+            // 錯誤處理稍微簡化，避免卡在錯誤畫面太久
+            alert(msg + "，請確認 GPS 已開啟。");
+            liff.closeWindow(); // 發生錯誤也嘗試關閉
+        }
+
+        main();
+    </script>
+</body>
+</html>

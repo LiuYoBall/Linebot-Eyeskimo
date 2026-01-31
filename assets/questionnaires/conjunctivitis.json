@@ -1,205 +1,46 @@
 {
-  "surveyId": "conjunctivitis",
-  "description": "結膜炎專項評估",
-  "questions": [
-    {
-      "id": "Q1",
-      "survey": "conjunctivitis",
-      "next": "Q2",
-      "type": "text",
-      "text": "Q1/5 【症狀型態】請問您目前眼睛「最明顯」的分泌物狀態為何？",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "黃白色、黏稠膿狀",
-              "data": "key=discharge_type&value=purulent&risk=bacterial",
-              "displayText": "分泌物呈現黃白色、黏稠或是膿狀"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "清澈水狀或無分泌物",
-              "data": "key=discharge_type&value=watery_or_none&risk=viral_allergic",
-              "displayText": "分泌物是清澈水狀，或幾乎沒有"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "以眼睛癢為主",
-              "data": "key=discharge_type&value=itching_dominant&risk=allergic",
-              "displayText": "分泌物不多，主要是非常癢"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "僅早上起床黏住",
-              "data": "key=discharge_type&value=morning_sticky&risk=mild",
-              "displayText": "平時還好，只有早上起床會黏住"
-            }
-          }
-        ]
-      }
+  "disease": "conjunctivitis",
+  "source": [
+    "NIH MedlinePlus",
+    "CDC Pink Eye",
+    "American Academy of Ophthalmology"
+  ],
+  "start_question": "Q1",
+  "questions": {
+    "Q1": {
+      "text": "最近是否出現眼睛明顯發紅的情況？",
+      "options": [
+        { "label": "有", "value": "yes", "next": "Q2" },
+        { "label": "沒有", "value": "no", "next": "Q2" }
+      ]
     },
-    {
-      "id": "Q2",
-      "survey": "conjunctivitis",
-      "next": "Q3",
-      "type": "text",
-      "text": "Q2/5 【疼痛感受】請問眼睛的痛感最接近下列哪種描述？",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "異物感/像進沙子",
-              "data": "key=pain_level&value=gritty&severity=low",
-              "displayText": "覺得有異物感，像沙子跑進去"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "深層脹痛/畏光",
-              "data": "key=pain_level&value=deep_pain_photophobia&severity=high",
-              "displayText": "感到深層脹痛，或是看到光會很不舒服"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "無明顯疼痛",
-              "data": "key=pain_level&value=none&severity=none",
-              "displayText": "沒有明顯疼痛"
-            }
-          }
-        ]
-      }
+    "Q2": {
+      "text": "眼睛是否感到癢、刺痛或有異物感？",
+      "options": [
+        { "label": "有", "value": "yes", "next": "Q3" },
+        { "label": "沒有", "value": "no", "next": "Q3" }
+      ]
     },
-    {
-      "id": "Q3",
-      "survey": "conjunctivitis",
-      "next": "Q4",
-      "type": "text",
-      "text": "Q3/5 【視力檢查】請問現在看東西清楚嗎？（若有戴眼鏡請以矯正後為主）",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "視力正常/無改變",
-              "data": "key=vision&value=normal&severity=none",
-              "displayText": "視力正常，跟平常一樣"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "眨眼後變清楚",
-              "data": "key=vision&value=blur_clears_blink&severity=low",
-              "displayText": "有點模糊，但眨眼後會變清楚"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "持續模糊/視力下降",
-              "data": "key=vision&value=vision_loss&severity=high",
-              "displayText": "持續看不清楚，視力明顯下降"
-            }
-          }
-        ]
-      }
+    "Q3": {
+      "text": "是否有分泌物（如眼屎、黏液或膿性分泌物）？",
+      "options": [
+        { "label": "有", "value": "yes", "next": "Q4" },
+        { "label": "沒有", "value": "no", "next": "Q4" }
+      ]
     },
-    {
-      "id": "Q4",
-      "survey": "conjunctivitis",
-      "next": "Q5",
-      "type": "text",
-      "text": "Q4/5 【風險因子】請問近期是否有配戴隱形眼鏡？",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "沒有配戴",
-              "data": "key=contact_lens&value=no&risk=low",
-              "displayText": "近期沒有配戴隱形眼鏡"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "有，發病前有戴",
-              "data": "key=contact_lens&value=yes_recent&risk=high",
-              "displayText": "有，發病前幾天有戴"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "有，現在還戴著",
-              "data": "key=contact_lens&value=yes_wearing&risk=very_high",
-              "displayText": "有，我現在還戴著"
-            }
-          }
-        ]
-      }
+    "Q4": {
+      "text": "早上起床時，眼睛是否曾被分泌物黏住不易張開？",
+      "options": [
+        { "label": "是", "value": "yes", "next": "Q5" },
+        { "label": "否", "value": "no", "next": "Q5" }
+      ]
     },
-    {
-      "id": "Q5",
-      "survey": "conjunctivitis",
-      "next": "result",
-      "type": "text",
-      "text": "Q5/5 【發生時間】這些症狀持續多久了？",
-      "quickReply": {
-        "items": [
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "突然發生 (2天內)",
-              "data": "key=duration&value=acute_less_2_days",
-              "displayText": "這 1-2 天突然發生的"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "持續一陣子 (3-7天)",
-              "data": "key=duration&value=subacute_3_7_days",
-              "displayText": "已經持續 3-7 天了"
-            }
-          },
-          {
-            "type": "action",
-            "action": {
-              "type": "postback",
-              "label": "很久了 (>1週)",
-              "data": "key=duration&value=chronic_more_1_week",
-              "displayText": "超過一週了"
-            }
-          }
-        ]
-      }
+    "Q5": {
+      "text": "目前症狀是單眼為主，還是雙眼都有？",
+      "options": [
+        { "label": "單眼", "value": "single_eye", "next": "END" },
+        { "label": "雙眼", "value": "both_eyes", "next": "END" }
+      ]
     }
-  ]
+  }
 }

@@ -18,10 +18,14 @@ class LineService:
         # 初始化 LINE Bot API
         self.api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
         self.handler = WebhookHandler(settings.LINE_CHANNEL_SECRET)
-        self.template_dir = Path("assets/templates")
+        
+        # 定義多個資源路徑
+        self.base_dir = Path("assets")
+        self.template_dir = self.base_dir / "templates"
+        self.knowledge_dir = self.base_dir / "knowledge" / "static_cards"
 
         # 載入主題設定 (若檔案不存在需有防呆)
-        theme_path = Path("assets/styles/themes.json")
+        theme_path = self.base_dir / "styles" / "themes.json"
         self.themes = self._load_json(theme_path) if theme_path.exists() else {}
 
     def _load_json(self, path: Path) -> Dict[str, Any]:
@@ -38,19 +42,29 @@ class LineService:
 
     def _load_template(self, filename: str) -> Dict[str, Any]:
         """讀取 JSON 模板並回傳 Dict"""
+        # 1. 嘗試從 UI 樣板目錄讀取
         path = self.template_dir / filename
-        if not path.exists():
-            raise FileNotFoundError(f"Template not found: {filename}")
+        if path.exists():
+            return self._load_json(path)
         
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
+        # 2. 嘗試從 衛教知識卡片目錄 讀取
+        path = self.knowledge_dir / filename
+        if path.exists():
+            return self._load_json(path)
+        
+        # 3. 都找不到，拋出錯誤
+        raise FileNotFoundError(f"Template/Card not found: {filename}")
 
     def reply_text(self, reply_token: str, text: str):
         """回覆純文字"""
-        try:
-            self.api.reply_message(reply_token, TextSendMessage(text=text))
-        except Exception as e:
-            print(f"❌ Reply text failed: {e}")
+        # try:
+        #     self.api.reply_message(reply_token, TextSendMessage(text=text))
+        # except Exception as e:
+        #     print(f"❌ Reply text failed: {e}")
+
+        print(f"DEBUG: 準備回覆 Token: {reply_token}，內容: {text}")
+        self.api.reply_message(reply_token, TextSendMessage(text=text))
+        print("DEBUG: 回覆成功！")
 
     # ==========================================
     # 🚀 Phase 1: 發送 YOLO 確認卡片
@@ -183,6 +197,10 @@ class LineService:
         try:
             # 1. 取得題目文字
             text = question_data.get("text", "請回答以下問題")
+
+            # 取得該題目的流程控制參數
+            survey_id = question_data.get("survey")
+            next_id = question_data.get("next")
             
             # 2. 處理 QuickReply
             qr_items_json = question_data.get("quickReply", {}).get("items", [])
@@ -191,10 +209,16 @@ class LineService:
             for item in qr_items_json:
                 action_data = item.get("action", {})
                 
+                # 取得原本的 data 
+                original_data = action_data.get("data", "")
+                
+                # 將 survey 和 next 自動拼接到 data 後面
+                new_data = f"{original_data}&survey={survey_id}&next={next_id}"
+
                 # 建立 PostbackAction
                 action = PostbackAction(
                     label=action_data.get("label"),
-                    data=action_data.get("data"),
+                    data=new_data,
                     display_text=action_data.get("displayText") # 讓使用者點擊後會說話
                 )
                 quick_reply_buttons.append(QuickReplyButton(action=action))

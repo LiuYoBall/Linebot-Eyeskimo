@@ -1,0 +1,50 @@
+{
+  "type": "bubble",
+  "size": "kilo",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "🏥 搜尋附近診所",
+        "weight": "bold",
+        "size": "xl",
+        "color": "#4b4a4a"
+      },
+      {
+        "type": "text",
+        "text": "※ 僅用於搜尋附近診所，不會儲存您的位置",
+        "size": "xxs",
+        "margin": "sm",
+        "color": "#aaaaaa"
+      },
+      {
+        "type": "text",
+        "text": "點擊下方按鈕\n 即可查看您附近的眼科診所。",
+        "wrap": true,
+        "margin": "xxl",
+        "color": "#666666",
+        "size": "sm"
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "button",
+        "style": "primary",
+        "color": "#17A2B8",
+        "height": "sm",
+        "action": {
+          "type": "uri",
+          "label": "🔍 搜尋附近眼科",
+          "uri": "PLACEHOLDER_LIFF_URL"
+        },
+        "margin": "none"
+      }
+    ]
+  }
+}

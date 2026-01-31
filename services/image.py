@@ -2,10 +2,10 @@ import cv2
 import numpy as np
 import uuid
 import requests
+import os
 from datetime import datetime, timedelta
-from google.cloud import storage
-from typing import Optional, Tuple
 
+from google.cloud import storage
 import google.auth
 from google.auth.transport.requests import Request as GoogleAuthRequest
 
@@ -19,9 +19,44 @@ from schemas import (
 class ImageService:
     def __init__(self):
         # 初始化 GCS Client
-        # Cloud Run 會自動抓取 Service Account，無需手動給 key
+        # Cloud Run 自動抓取 Service Account
         self.storage_client = storage.Client(project=settings.GCP_PROJECT_ID)
         self.bucket = self.storage_client.bucket(settings.GCS_BUCKET_NAME)
+
+    def _get_signing_credentials(self):
+        """
+        取得用於簽名的憑證資訊
+        回傳: (service_account_email, access_token) 或 (None, None)
+        """
+        try:
+            credentials, _ = google.auth.default()
+            
+            # 確保憑證有效
+            if not credentials.valid:
+                credentials.refresh(GoogleAuthRequest())
+
+            # 情況 A: 本地端使用 JSON Key (最強優先級)
+            # JSON Key 憑證通常會直接帶有 service_account_email
+            if hasattr(credentials, "service_account_email") and credentials.service_account_email != "default":
+                return credentials.service_account_email, credentials.token
+
+            # 情況 B: Cloud Run 環境 (Metadata Server)
+            # 如果是 'default'，代表是環境預設憑證，需要去 Metadata Server 問真正的 Email
+            if os.getenv("K_SERVICE"): # 簡單判斷是否在 Cloud Run 環境
+                try:
+                    metadata_url = "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email"
+                    headers = {"Metadata-Flavor": "Google"}
+                    resp = requests.get(metadata_url, headers=headers, timeout=2)
+                    if resp.status_code == 200:
+                        return resp.text.strip(), credentials.token
+                except:
+                    pass
+            
+            return None, None
+
+        except Exception as e:
+            print(f"⚠️ Credential error: {e}")
+            return None, None
 
     def _bytes_to_cv2(self, data: bytes) -> np.ndarray:
         """將 bytes 轉為 OpenCV 格式"""
@@ -52,33 +87,34 @@ class ImageService:
         
         # 2. 產生 Signed URL
         try:
-            # 取得目前的憑證資訊
-            credentials, _ = google.auth.default()
-
-            # 確保憑證有效 (Cloud Run 的 Token 有時需要 refresh)
-            if not credentials.valid:
-                credentials.refresh(GoogleAuthRequest())
-
-            # 嘗試取得服務帳號 Email
-            # 本地 key.json 會自動有; Cloud Run 環境則需要從 credentials 屬性抓
-            sa_email = getattr(credentials, "service_account_email", None)
-            
-            # 產生簽署連結
-            # service_account_email: 告訴函式若無私鑰，請呼叫 IAM API 代簽
-            # access_token: IAM API 驗證用
-            url = blob.generate_signed_url(
+            # 嘗試 1: 標準簽名 (適用於本地有 JSON Key 的情況)
+            return blob.generate_signed_url(
                 version="v4",
                 expiration=timedelta(hours=24),
-                method="GET",
-                service_account_email=sa_email, 
-                access_token=credentials.token 
+                method="GET"
             )
-            return url
+        except Exception as e_standard:
+            # 嘗試 2: IAM 簽名 (適用於 Cloud Run 環境)
+            # print(f"標準簽章失敗，嘗試 IAM 簽章... ({e_standard})")
             
-        except Exception as e:
-            print(f"❌ Generate Signed URL failed: {e}")
-            # 若簽章失敗 (例如本地缺乏 Service Account 金鑰)，回傳一個錯誤標示或空字串
-            # 注意：若是在 Cloud Run，Service Account 需要有 'Service Account Token Creator' 角色
+            try:
+                sa_email, token = self._get_signing_credentials()
+                if sa_email and token:
+                    return blob.generate_signed_url(
+                        version="v4",
+                        expiration=timedelta(hours=24),
+                        method="GET",
+                        service_account_email=sa_email,
+                        access_token=token
+                    )
+                else:
+                    print(f"錯誤: 無法取得 Service Account Email 或 Token。")
+            except Exception as e_iam:
+                print(f"錯誤: IAM Signed URL 生成失敗: {e_iam}")
+                # 常見錯誤是 403 Permission denied，代表缺 Service Account Token Creator 權限
+            
+            # 如果兩者都失敗，回傳空字串
+            print(f"錯誤: 無法產生 Signed URL。原始錯誤: {e_standard}")
             return ""
 
     def _download_image_from_url(self, url: str) -> np.ndarray:

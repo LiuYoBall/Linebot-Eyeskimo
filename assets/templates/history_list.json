@@ -7,23 +7,27 @@
     "contents": [
       {
         "type": "text",
-        "text": "📅 歷史檢查紀錄",
+        "text": "📄 歷史檢查紀錄",
         "weight": "bold",
-        "size": "lg",
-        "color": "#1DB446"
+        "size": "xl",
+        "color": "#17A2B8",
+        "style": "normal",
+        "decoration": "none"
       },
       {
         "type": "text",
         "text": "僅顯示最近 5 筆資料",
         "size": "xxs",
-        "color": "#aaaaaa"
+        "color": "#BBBBBB",
+        "align": "start",
+        "margin": "sm"
       }
     ]
   },
   "body": {
     "type": "box",
     "layout": "vertical",
-    "spacing": "md",
+    "spacing": "none",
     "contents": [
       {
         "type": "text",
@@ -31,9 +35,9 @@
         "size": "sm",
         "color": "#666666",
         "align": "center",
-        "wrap": true
+        "wrap": true,
+        "margin": "md"
       }
-      
     ]
   },
   "footer": {
@@ -42,12 +46,13 @@
     "contents": [
       {
         "type": "button",
-        "style": "link",
+        "style": "primary",
         "action": {
           "type": "message",
           "label": "開始新的檢測",
-          "text": "開始AI檢測"
-        }
+          "text": "開始檢測"
+        },
+        "color": "#17A2B8"
       }
     ]
   }

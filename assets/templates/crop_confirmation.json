@@ -4,13 +4,14 @@
   "header": {
     "type": "box",
     "layout": "vertical",
+    "paddingAll": "12px",
     "contents": [
       {
         "type": "text",
-        "text": "請確認偵測範圍",
+        "text": "請確認 AI 框選眼睛位置",
         "weight": "bold",
-        "size": "lg",
-        "color": "#1DB446"
+        "size": "xl",
+        "color": "#1565C0"
       }
     ]
   },
@@ -28,6 +29,7 @@
   "body": {
     "type": "box",
     "layout": "vertical",
+    "paddingAll": "12px",
     "contents": [
       {
         "type": "text",
@@ -35,6 +37,14 @@
         "wrap": true,
         "size": "sm",
         "color": "#666666"
+      },
+      {
+        "type": "text",
+        "text": "⚠️ 拍攝時請避免瞳孔反光",
+        "size": "xs",
+        "color": "#666666",
+        "align": "center",
+        "margin": "md"
       }
     ]
   },
@@ -42,24 +52,25 @@
     "type": "box",
     "layout": "horizontal",
     "spacing": "sm",
+    "paddingAll": "12px",
     "contents": [
       {
         "type": "button",
         "style": "primary",
-        "color": "#1DB446",
+        "color": "#1565C0",
+        "height": "md",
         "action": {
           "type": "postback",
-          "label": "✅ 正確，分析",
+          "label": "正確，分析",
           "data": "action=confirm_cnn&report_id=PLACEHOLDER_REPORT_ID"
         }
       },
       {
         "type": "button",
         "style": "secondary",
-        "color": "#aaaaaa",
         "action": {
           "type": "postback",
-          "label": "❌ 重拍",
+          "label": "重新拍攝",
           "data": "action=retry"
         }
       }

@@ -15,7 +15,7 @@
             "action": {
               "type": "postback",
               "label": "看不清楚/視力下降",
-              "data": "key=main_complaint&value=vision_loss&category=vision&survey=text_mode&next=Q2",
+              "data": "key=main_complaint&value=vision_loss&category=vision",
               "displayText": "我覺得視力變差，看不清楚"
             }
           },
@@ -24,7 +24,7 @@
             "action": {
               "type": "postback",
               "label": "眼睛紅/分泌物多",
-              "data": "key=main_complaint&value=red_discharge&category=infection&survey=text_mode&next=Q2",
+              "data": "key=main_complaint&value=red_discharge&category=infection",
               "displayText": "眼睛紅紅的，或是分泌物很多"
             }
           },
@@ -33,7 +33,7 @@
             "action": {
               "type": "postback",
               "label": "疼痛/異物感/癢",
-              "data": "key=main_complaint&value=pain_itch&category=surface&survey=text_mode&next=Q2",
+              "data": "key=main_complaint&value=pain_itch&category=surface",
               "displayText": "眼睛痛、癢，或是有異物感"
             }
           },
@@ -42,7 +42,7 @@
             "action": {
               "type": "postback",
               "label": "看東西變形/黑影",
-              "data": "key=main_complaint&value=distortion&category=retina&survey=text_mode&next=Q2",
+              "data": "key=main_complaint&value=distortion&category=retina",
               "displayText": "看東西變形，或視野有黑影遮擋"
             }
           }
@@ -62,7 +62,7 @@
             "action": {
               "type": "postback",
               "label": "突然發生 (幾小時/天)",
-              "data": "key=onset&value=acute&risk=high&survey=text_mode&next=Q3",
+              "data": "key=onset&value=acute&risk=high",
               "displayText": "這幾天突然發生的"
             }
           },
@@ -71,7 +71,7 @@
             "action": {
               "type": "postback",
               "label": "逐漸發生 (數週/月)",
-              "data": "key=onset&value=chronic&risk=medium&survey=text_mode&next=Q3",
+              "data": "key=onset&value=chronic&risk=medium",
               "displayText": "已經持續好幾週或是幾個月了"
             }
           },
@@ -80,7 +80,7 @@
             "action": {
               "type": "postback",
               "label": "時好時壞",
-              "data": "key=onset&value=intermittent&risk=low&survey=text_mode&next=Q3",
+              "data": "key=onset&value=intermittent&risk=low",
               "displayText": "時好時壞，休息會好一點"
             }
           }
@@ -100,7 +100,7 @@
             "action": {
               "type": "postback",
               "label": "完全不痛",
-              "data": "key=pain_type&value=none&sign=painless&survey=text_mode&next=Q4",
+              "data": "key=pain_type&value=none&sign=painless",
               "displayText": "完全不會痛"
             }
           },
@@ -109,7 +109,7 @@
             "action": {
               "type": "postback",
               "label": "沙沙的/刺痛/癢",
-              "data": "key=pain_type&value=surface_irritation&sign=surface&survey=text_mode&next=Q4",
+              "data": "key=pain_type&value=surface_irritation&sign=surface",
               "displayText": "像進沙子一樣刺刺的，或是很癢"
             }
           },
@@ -118,7 +118,7 @@
             "action": {
               "type": "postback",
               "label": "深層脹痛/頭痛",
-              "data": "key=pain_type&value=deep_ache&sign=emergency&survey=text_mode&next=Q4",
+              "data": "key=pain_type&value=deep_ache&sign=emergency",
               "displayText": "眼睛深處脹痛，甚至伴隨頭痛"
             }
           }
@@ -138,7 +138,7 @@
             "action": {
               "type": "postback",
               "label": "沒什麼分泌物",
-              "data": "key=discharge&value=none&type=dry&survey=text_mode&next=Q5",
+              "data": "key=discharge&value=none&type=dry",
               "displayText": "沒什麼特別的分泌物"
             }
           },
@@ -147,7 +147,7 @@
             "action": {
               "type": "postback",
               "label": "黃綠色/膿狀",
-              "data": "key=discharge&value=purulent&type=bacterial&survey=text_mode&next=Q5",
+              "data": "key=discharge&value=purulent&type=bacterial",
               "displayText": "有很多黃綠色、黏稠的眼屎"
             }
           },
@@ -156,7 +156,7 @@
             "action": {
               "type": "postback",
               "label": "清澈水狀",
-              "data": "key=discharge&value=watery&type=viral_allergy&survey=text_mode&next=Q5",
+              "data": "key=discharge&value=watery&type=viral_allergy",
               "displayText": "水水的，眼淚流不停"
             }
           }
@@ -176,7 +176,7 @@
             "action": {
               "type": "postback",
               "label": "線條扭曲/中心黑影",
-              "data": "key=visual_distortion&value=macular_sign&disease=macular&survey=text_mode&next=Q6",
+              "data": "key=visual_distortion&value=macular_sign&disease=macular",
               "displayText": "看直線會歪掉，或是中間有一塊黑黑的"
             }
           },
@@ -185,7 +185,7 @@
             "action": {
               "type": "postback",
               "label": "彩虹光圈/霧視",
-              "data": "key=visual_distortion&value=halos&disease=glaucoma_cataract&survey=text_mode&next=Q6",
+              "data": "key=visual_distortion&value=halos&disease=glaucoma_cataract",
               "displayText": "看燈光有彩虹光圈，或像看霧一樣"
             }
           },
@@ -194,7 +194,7 @@
             "action": {
               "type": "postback",
               "label": "閃光/飛蚊/黑幕",
-              "data": "key=visual_distortion&value=flashes_curtain&disease=retinal_detachment&survey=text_mode&next=Q6",
+              "data": "key=visual_distortion&value=flashes_curtain&disease=retinal_detachment",
               "displayText": "有看到閃電、很多飛蚊，或像窗簾蓋下來"
             }
           },
@@ -203,7 +203,7 @@
             "action": {
               "type": "postback",
               "label": "沒有以上狀況",
-              "data": "key=visual_distortion&value=none&disease=none&survey=text_mode&next=Q6",
+              "data": "key=visual_distortion&value=none&disease=none",
               "displayText": "沒有以上這些狀況"
             }
           }
@@ -223,7 +223,7 @@
             "action": {
               "type": "postback",
               "label": "整隻眼睛紅/血絲多",
-              "data": "key=redness_pattern&value=diffuse&type=conjunctivitis&survey=text_mode&next=Q7",
+              "data": "key=redness_pattern&value=diffuse&type=conjunctivitis",
               "displayText": "整隻眼睛都紅紅的，充滿血絲"
             }
           },
@@ -232,7 +232,7 @@
             "action": {
               "type": "postback",
               "label": "黑眼珠周圍一圈紅",
-              "data": "key=redness_pattern&value=ciliary_flush&type=iritis_cornea&survey=text_mode&next=Q7",
+              "data": "key=redness_pattern&value=ciliary_flush&type=iritis_cornea",
               "displayText": "主要是黑眼珠周圍紅一圈"
             }
           },
@@ -241,7 +241,7 @@
             "action": {
               "type": "postback",
               "label": "眼白有一塊鮮紅血塊",
-              "data": "key=redness_pattern&value=subconjunctival_hemorrhage&type=hemorrhage&survey=text_mode&next=Q7",
+              "data": "key=redness_pattern&value=subconjunctival_hemorrhage&type=hemorrhage",
               "displayText": "眼白突然出現一塊鮮紅色的血塊，其他地方不紅"
             }
           },
@@ -250,7 +250,7 @@
             "action": {
               "type": "postback",
               "label": "沒有紅眼",
-              "data": "key=redness_pattern&value=none&type=normal&survey=text_mode&next=Q7",
+              "data": "key=redness_pattern&value=none&type=normal",
               "displayText": "眼睛沒有紅"
             }
           }
@@ -270,7 +270,7 @@
             "action": {
               "type": "postback",
               "label": "戴隱形眼鏡/受傷",
-              "data": "key=risk_factor&value=contact_lens_trauma&risk=high&survey=text_mode&next=Q8",
+              "data": "key=risk_factor&value=contact_lens_trauma&risk=high",
               "displayText": "有戴隱形眼鏡，或眼睛最近受過傷/撞擊"
             }
           },
@@ -279,7 +279,7 @@
             "action": {
               "type": "postback",
               "label": "糖尿病/高血壓",
-              "data": "key=risk_factor&value=chronic_disease&risk=retinopathy&survey=text_mode&next=Q8",
+              "data": "key=risk_factor&value=chronic_disease&risk=retinopathy",
               "displayText": "我有糖尿病或高血壓病史"
             }
           },
@@ -288,7 +288,7 @@
             "action": {
               "type": "postback",
               "label": "長時間用眼",
-              "data": "key=risk_factor&value=digital_strain&risk=fatigue&survey=text_mode&next=Q8",
+              "data": "key=risk_factor&value=digital_strain&risk=fatigue",
               "displayText": "最近長時間看電腦手機或熬夜"
             }
           }
@@ -308,7 +308,7 @@
             "action": {
               "type": "postback",
               "label": "會改善",
-              "data": "key=relief&value=improved&type=fatigue_dry&survey=text_mode&next=result",
+              "data": "key=relief&value=improved&type=fatigue_dry",
               "displayText": "休息後會覺得舒服一點"
             }
           },
@@ -317,7 +317,7 @@
             "action": {
               "type": "postback",
               "label": "沒改善/更痛",
-              "data": "key=relief&value=persistent&type=pathological&survey=text_mode&next=result",
+              "data": "key=relief&value=persistent&type=pathological",
               "displayText": "休息沒用，甚至更不舒服"
             }
           }
