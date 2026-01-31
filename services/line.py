@@ -5,7 +5,8 @@ from typing import Dict, Any
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import (
     TextSendMessage, FlexSendMessage, 
-    QuickReply, QuickReplyButton, PostbackAction
+    QuickReply, QuickReplyButton, PostbackAction,
+    CameraAction, CameraRollAction
 )
 
 from config import settings
@@ -63,6 +64,28 @@ class LineService:
         print(f"DEBUG: 準備回覆 Token: {reply_token}，內容: {text}")
         self.api.reply_message(reply_token, TextSendMessage(text=text))
         print("DEBUG: 回覆成功！")
+    
+    def send_camera_request(self, reply_token: str):
+        """
+        發送 Quick Reply 引導使用者開啟相機或相簿
+        """
+        try:
+            message = TextSendMessage(
+                text="請選擇上傳方式，或直接傳送一張眼睛照片 📸",
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyButton(action=CameraAction(label="開啟相機")),
+                        QuickReplyButton(action=CameraRollAction(label="選擇相片"))
+                    ]
+                )
+            )
+            self.api.reply_message(reply_token, message)
+            print(f"DEBUG: 已發送相機引導按鈕 Token: {reply_token}")
+            
+        except Exception as e:
+            print(f"❌ Send camera request failed: {e}")
+            # 失敗時的備案
+            self.reply_text(reply_token, "請直接上傳一張眼睛照片。")
 
     # ==========================================
     # 🚀 Phase 1: 發送 YOLO 確認卡片

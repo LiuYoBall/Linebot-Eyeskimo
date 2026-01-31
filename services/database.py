@@ -101,6 +101,33 @@ class DatabaseService:
         except Exception as e:
             print(f"❌ Get user state failed: {e}")
             return {"persona": "doctor", "survey": None}
+        
+    def update_persona(self, user_id: str, persona: str):
+        """更新風格"""
+        self.save_user_state(user_id, {"persona": persona})
+
+    def update_rag_mode(self, user_id: str, is_active: bool, topic: str = None):
+        """更新衛教模式狀態"""
+        data = {"rag_mode": is_active}
+        if topic:
+            data["rag_topic"] = topic
+        self.save_user_state(user_id, data)
+
+    def update_survey_progress(self, user_id: str, survey_id: str, answers: list):
+        """更新問卷進度"""
+        self.save_user_state(user_id, {
+            "survey": {
+                "id": survey_id,
+                "answers": answers
+                # 可再加 current_q 
+            }
+        })
+
+    def clear_survey(self, user_id: str):
+        """清空問卷狀態 (問卷完成後呼叫)"""
+        # Firestore 刪除欄位的方法: set 搭配 FieldValue.delete()
+        # 目前邏輯為設為 None (null)
+        self.save_user_state(user_id, {"survey": None})
 
 # 單例模式實例化
 db_service = DatabaseService()

@@ -25,11 +25,6 @@ from services import (
 from models import ai_manager
 from schemas import DiagnosisStatus
 
-# 全域變數宣告 (Cloud Run多開環境下會不穩定，建議未來遷移至 Firestore)
-user_personas = {}
-user_survey_state = {} # 記憶問卷答案 
-user_rag_state = {} # 記錄「衛教諮詢 (RAG)」
-
 # ==========================================
 # 1. 生命週期管理 (啟動/關閉)
 # ==========================================
@@ -87,6 +82,15 @@ def handle_text_message(event):
     
     logger.info(f"收到文字 [{user_id}]: {text}")
 
+    #  --- 從 DB 讀取使用者狀態 ---
+    user_state = db_service.get_user_state(user_id)
+    
+    # 取得當前風格 (預設 doctor)
+    current_persona = user_state.get("persona", "doctor")
+    # 取得 RAG 狀態
+    is_rag_mode = user_state.get("rag_mode", False)
+    rag_topic = user_state.get("rag_topic", None)
+
     # --- Rich Menu 按鈕處理 ---
 
     # 1. [風格設定]
@@ -105,8 +109,7 @@ def handle_text_message(event):
     # 2. [開始檢測]
     if text == "開始檢測":
         # 引導使用者上傳圖片或選擇文字模式
-        msg = "請傳送「單一」眼睛照片，並確保對焦正確不模糊📸"
-        line_service.reply_text(event.reply_token, msg)
+        line_service.send_camera_request(event.reply_token)
         return
 
     # 3. [歷史紀錄]
@@ -234,45 +237,6 @@ def handle_text_message(event):
             line_service.reply_text(event.reply_token, "暫時無法載入衛教資訊。")
         return
 
-    # 6. [症狀問答] (啟動文字問診流程)
-    if text == "症狀問答":
-        # 設定問卷檔案與 ID
-        survey_filename = "text_mode.json"
-        survey_id = "text_mode"
-
-        try:
-            # 1. 讀取問卷 JSON
-            survey_data = line_service._load_json(Path(f"assets/questionnaires/{survey_filename}"))
-            
-            if not survey_data:
-                logger.error(f"找不到問卷檔案: {survey_filename}")
-                line_service.reply_text(event.reply_token, "系統維護中，暫無法載入問卷。")
-                return
-
-            # 2. 初始化使用者狀態 (清空過去的回答)
-            user_survey_state[user_id] = {
-                "current_survey": survey_id,
-                "answers": []
-            }
-
-            # 3. 發送第一題 (Q1)
-            questions = survey_data.get("questions", {})
-            
-            # 用 Key 取得第一題 (優先讀取 json 裡的 start_question 設定，預設 Q1)
-            start_q_id = survey_data.get("start_question", "Q1")
-            first_q = questions.get(start_q_id)
-            
-            if first_q:
-                # 必須傳入 survey_id
-                line_service.send_question(event.reply_token, first_q, survey_id=survey_id)
-            else:
-                line_service.reply_text(event.reply_token, "問卷格式錯誤 (找不到 Q1)。")
-
-        except Exception as e:
-            logger.error(f"症狀問答啟動失敗: {e}")
-            line_service.reply_text(event.reply_token, "發生錯誤，請稍後再試。")
-        return
-
     # --- 2. 處理風格切換指令 ---
     if text.startswith("切換風格："):
         # 取出冒號後面的英文代碼 (e.g., doctor, nurse...)
@@ -281,87 +245,88 @@ def handle_text_message(event):
         valid_roles = llm_service.system_prompts.get("roles", {}).keys()
         
         if selected_role in valid_roles:
-            user_personas[user_id] = selected_role # 記錄   
-            # 給予對應回覆
+            db_service.update_persona(user_id, selected_role)   
             role_names = {
-                "doctor": "專業醫師",
-                "nurse": "溫柔護理師",
-                "comedian": "幽默演員",
-                "asian_parent": "亞洲父母"
+                "doctor": "醫師",
+                "nurse": "護理師",
+                "comedian": "演員",
+                "asian_parent": "父母"
             }
             role_name = role_names.get(selected_role, selected_role)
-            line_service.reply_text(event.reply_token, f"已切換為【{role_name}】風格！請把照片傳給我吧！")
+            line_service.reply_text(event.reply_token, f"已切換為【{role_name}】風格！！")
         else:
             line_service.reply_text(event.reply_token, "無效的角色選擇。")
         return
     
     # === 問卷啟動指令 ===
-    # 當使用者輸入 "白內障檢測" 或 "結膜炎檢測" 時觸發
-    if text in ["白內障檢測", "結膜炎檢測"]:
-        # 1. 決定要讀哪份問卷
-        survey_filename = "cataract.json" if text == "白內障檢測" else "conjunctivitis.json"
-        survey_id = survey_filename.replace(".json", "") # 取得 ID (如 cataract)
+    if text in ["白內障檢測", "結膜炎檢測", "文字問診模式", "症狀問答"]:
+        # 1. 決定 survey_id 與 filename
+        if text == "白內障檢測":
+            filename, s_id = "cataract.json", "cataract"
+        elif text == "結膜炎檢測":
+            filename, s_id = "conjunctivitis.json", "conjunctivitis"
+        else:
+            filename, s_id = "text_mode.json", "text_mode"
 
         try:
-            # 2. 讀取問卷 JSON
-            survey_data = line_service._load_json(Path(f"assets/questionnaires/{survey_filename}"))
-            
+            survey_data = line_service._load_json(Path(f"assets/questionnaires/{filename}"))
             if not survey_data:
                 line_service.reply_text(event.reply_token, "找不到問卷檔案。")
                 return
 
-            # 3. 初始化使用者的狀態
-            user_survey_state[user_id] = {
-                "current_survey": survey_id,
-                "answers": []
-            }
+            # 初始化 DB 中的問卷狀態 (清空 answers)
+            db_service.update_survey_progress(user_id, s_id, [])
 
-            # 4. 發送第一題 (通常是 id="Q1")
+            # 發送第一題
             questions = survey_data.get("questions", {})
             start_q_id = survey_data.get("start_question", "Q1")
             first_q = questions.get(start_q_id)
             
             if first_q:
-                line_service.send_question(event.reply_token, first_q, survey_id=survey_id)
+                line_service.send_question(event.reply_token, first_q, survey_id=s_id)
             else:
-                line_service.reply_text(event.reply_token, "問卷格式錯誤 (找不到 Q1)。")
-
+                line_service.reply_text(event.reply_token, "問卷格式錯誤。")
         except Exception as e:
-            logger.error(f"啟動問卷失敗: {e}")
+            logger.error(f"問卷啟動失敗: {e}")
             line_service.reply_text(event.reply_token, "啟動失敗，請稍後再試。")
         return
     
-    # === 文字問診模式啟動 ===
-    if text == "文字問診模式":
-        survey_filename = "text_mode.json"
-        survey_id = "text_mode"
-
+    # === RAG 衛教問答 ===
+    if is_rag_mode:
         try:
-            # 讀取共用的文字問診流程
-            survey_data = line_service._load_json(Path(f"assets/questionnaires/{survey_filename}"))
+            # 問完一次後自動關閉，避免使用者卡在衛教模式
+            db_service.update_rag_mode(user_id, False)
+
+            # 2. 載入 RAG 資料庫
+            rag_file_path = Path("assets/knowledge/rag_corpus.json")
+            context_text = "無相關資料庫內容"
             
-            if not survey_data:
-                line_service.reply_text(event.reply_token, "系統維護中 (找不到問卷檔案)。")
-                return
+            if rag_file_path.exists():
+                rag_data = line_service._load_json(rag_file_path)
+                found_items = []
+                for topic, content in rag_data.items():
+                    if topic in text or text in content:
+                        found_items.append(content)
+                if found_items:
+                    context_text = "\n".join(found_items[:3])
 
-            # 初始化狀態
-            user_survey_state[user_id] = {
-                "current_survey": survey_id,
-                "answers": []
-            }
+            # 3. 呼叫 LLM (加入 topic 資訊若有)
+            prompt_suffix = f"(Focus on {rag_topic})" if rag_topic else ""
+            final_prompt = llm_service.get_task_prompt(
+                "rag_consultation",
+                context=context_text,
+                question=text + prompt_suffix,
+                persona=current_persona
+            )
 
-            # 發送第一題
-            start_q_id = survey_data.get("start_question", "Q1")
-            first_q = questions.get(start_q_id)
-            if first_q:
-                line_service.send_question(event.reply_token, first_q, survey_id=survey_id)
-            else:
-                line_service.reply_text(event.reply_token, "問卷啟動失敗。")
-
+            reply = llm_service.generate_response(final_prompt, persona=current_persona)
+            line_service.reply_text(event.reply_token, reply)
+            
         except Exception as e:
-            logger.error(f"文字問診啟動失敗: {e}")
-            line_service.reply_text(event.reply_token, "發生錯誤，請稍後再試。")
+            logger.error(f"RAG 流程失敗: {e}")
+            line_service.reply_text(event.reply_token, "衛教諮詢發生錯誤。")
         return
+
     
     # === 歷史紀錄查詢 ===
     if text in ["查詢紀錄", "歷史紀錄", "History"]:
@@ -423,48 +388,6 @@ def handle_text_message(event):
             line_service.reply_text(event.reply_token, "系統忙碌中，無法讀取紀錄。")
         return
     
-    # === RAG 衛教問答專用區塊 ===
-    if user_rag_state.get(user_id) == True:
-        try:
-            # 1. 清除狀態
-            del user_rag_state[user_id]
-
-            # 2. 載入 RAG 資料庫 (此處保持不變)
-            rag_file_path = Path("assets/knowledge/rag_corpus.json")
-            context_text = "無相關資料庫內容" # 給預設值，避免 context 為空時 LLM 困惑
-            
-            if rag_file_path.exists():
-                rag_data = line_service._load_json(rag_file_path)
-                found_items = []
-                # 簡單關鍵字搜尋
-                for topic, content in rag_data.items():
-                    if topic in text or text in content or any(k in text for k in topic):
-                        found_items.append(content)
-                
-                if found_items:
-                    context_text = "\n".join(found_items[:3])
-
-            # 3. 組合 Prompt 
-            current_persona = user_personas.get(user_id, "doctor")
-            
-            # 並將變數透過參數傳入 json key: "rag_consultation"
-            final_prompt = llm_service.get_task_prompt(
-                "rag_consultation",
-                context=context_text,
-                question=text,
-                persona=current_persona
-            )
-
-            # 4. 呼叫 LLM
-            reply = llm_service.generate_response(final_prompt, persona=current_persona)
-            line_service.reply_text(event.reply_token, reply)
-            
-        except Exception as e:
-            logger.error(f"RAG 流程失敗: {e}")
-            line_service.reply_text(event.reply_token, "衛教諮詢發生錯誤，請稍後再試。")
-        
-        return
-
     # --- 3. 非指令的文字處理 (Default Fallback) ---
     try:
         fallback_path = Path("assets/fallback_messages.json")
@@ -534,18 +457,26 @@ def handle_postback(event):
 
     action = params.get("action")
 
+    # ==========================================
+    # 從 DB 讀取狀態
+    # ==========================================
+    user_state = db_service.get_user_state(user_id)
+    current_persona = user_state.get("persona", "doctor")
+    survey_state = user_state.get("survey", {}) # 取得問卷狀態
+    if survey_state is None: survey_state = {}
+
     # =================================================
     # 1. 記錄問卷答案 (若有 survey & value)
     # =================================================
     if "survey" in params and "value" in params:
         survey_id = params.get("survey")
-        # 過濾掉控制參數
         answer_data = {k: v for k, v in params.items() if k not in ["survey", "next", "action"]}
         
-        if user_id not in user_survey_state:
-             user_survey_state[user_id] = {"current_survey": survey_id, "answers": []}
+        # 讀取舊答案 -> 加入新答案 -> 存回 DB
+        existing_answers = survey_state.get("answers", [])
+        existing_answers.append(answer_data)
         
-        user_survey_state[user_id]["answers"].append(answer_data)
+        db_service.update_survey_progress(user_id, survey_id, existing_answers)
 
     # =================================================
     # 2. Action 分流處理
@@ -555,7 +486,7 @@ def handle_postback(event):
     if action == "submit_survey":
         survey_id = params.get("survey")
         try:
-            answers = user_survey_state.get(user_id, {}).get("answers", [])
+            answers = survey_state.get(user_id, {}).get("answers", [])
             answers_str = "\n".join([f"- {a}" for a in answers])
             
             prompt = llm_service.get_task_prompt(
@@ -564,7 +495,6 @@ def handle_postback(event):
                 answers_str=answers_str
             )
             
-            current_persona = user_personas.get(user_id, "doctor")
             reply = llm_service.generate_response(prompt, persona=current_persona)
             line_service.reply_text(event.reply_token, reply)
             
@@ -573,14 +503,15 @@ def handle_postback(event):
             line_service.reply_text(event.reply_token, "產生報告時發生錯誤，但您的回答紀錄已保存。")
         
         # 清除狀態
-        if user_id in user_survey_state:
-            del user_survey_state[user_id]
+        db_service.clear_survey(user_id)
         return
 
     # (B) 啟動 RAG 衛教諮詢
     elif action == "ask_llm":
-        user_rag_state[user_id] = True 
-        msg = "請輸入您想詢問的衛教內容 (10 字內) 📝\n\n例如：「白內障術後保養」"
+        topic = params.get("topic")
+        # 設定 RAG 模式為 True
+        db_service.update_rag_mode(user_id, True, topic)
+        msg = "請輸入您想詢問的衛教內容 (10 字內) 📝"
         line_service.reply_text(event.reply_token, msg)
         return
 
