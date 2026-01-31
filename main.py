@@ -390,7 +390,7 @@ def handle_text_message(event):
     
     # --- 3. 非指令的文字處理 (Default Fallback) ---
     try:
-        fallback_path = Path("assets/fallback_messages.json")
+        fallback_path = Path("assets/static/fallback_messages.json")
         reply_text = "抱歉，我不太理解您的意思。\n請使用下方選單功能操作。" # 預設
 
         if fallback_path.exists():
