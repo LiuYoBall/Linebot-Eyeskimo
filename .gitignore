@@ -11,9 +11,11 @@ key.json
 .env
 *.yml
 
-#  忽略其他資料夾
+#  忽略其他資料夾&工具
 test/
 old/
+setup_rich_menu.py
+menu_main.json
 
 # --- IDE 設定 ---
 .vscode/

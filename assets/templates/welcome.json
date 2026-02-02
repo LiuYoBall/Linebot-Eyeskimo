@@ -1,4 +1,304 @@
 {
+  "type": "carousel",
+  "contents": [
+    {
+  "type": "bubble",
+  "hero": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "image",
+        "url": "https://raw.githubusercontent.com/szutinglin/line_bot_Eye_test/main/hero_eye_health.png",
+        "size": "full",
+        "aspectRatio": "4:3",
+        "aspectMode": "cover",
+        "backgroundColor": "#F8F9FA"
+      }
+    ],
+    "paddingAll": "0px"
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "AI眼睛健康快篩",
+        "weight": "bold",
+        "size": "xxl",
+        "color": "#5B9BD5",
+        "align": "center",
+        "margin": "md"
+      },
+      {
+        "type": "text",
+        "text": "協助進行結膜炎與白內障的初步風險評估",
+        "size": "sm",
+        "color": "#666666",
+        "align": "center",
+        "wrap": true,
+        "margin": "md"
+      },
+      {
+        "type": "separator",
+        "margin": "lg"
+      },
+      {
+        "type": "text",
+        "text": "👉 想知道怎麼檢測？左右滑看看 👀",
+        "size": "xs",
+        "color": "#AAAAAA",
+        "align": "center",
+        "margin": "lg"
+      }
+    ],
+    "paddingAll": "20px"
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "button",
+        "style": "primary",
+        "action": {
+          "type": "postback",
+          "label": "開始檢測",
+          "data": "action=start_test"
+        },
+        "color": "#17A2B8",
+        "margin": "sm"
+      }
+    ],
+    "paddingAll": "17px"
+  }
+},
+{
+  "type": "bubble",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "使用說明",
+        "weight": "bold",
+        "size": "xxl",
+        "color": "#333333"
+      },
+      {
+        "type": "separator",
+        "margin": "lg"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "📷",
+                    "size": "xl",
+                    "align": "center"
+                  }
+                ],
+                "width": "50px",
+                "height": "50px",
+                "backgroundColor": "#5B9BD5",
+                "cornerRadius": "25px",
+                "justifyContent": "center",
+                "alignItems": "center"
+              },
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "拍攝眼睛影像",
+                    "weight": "bold",
+                    "size": "md",
+                    "color": "#333333"
+                  },
+                  {
+                    "type": "text",
+                    "text": "請於明亮環境下拍攝清晰的眼睛影像",
+                    "size": "sm",
+                    "color": "#999999",
+                    "wrap": true
+                  }
+                ],
+                "margin": "md",
+                "flex": 1
+              }
+            ],
+            "margin": "lg"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "↓",
+                "align": "center",
+                "color": "#5B9BD5",
+                "size": "xl",
+                "weight": "bold"
+              }
+            ],
+            "margin": "sm"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "🤖",
+                    "size": "xl",
+                    "weight": "bold",
+                    "color": "#FFFFFF",
+                    "align": "center"
+                  }
+                ],
+                "width": "50px",
+                "height": "50px",
+                "backgroundColor": "#5B9BD5",
+                "cornerRadius": "25px",
+                "justifyContent": "center",
+                "alignItems": "center"
+              },
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "AI 輔助分析",
+                    "weight": "bold",
+                    "size": "md",
+                    "color": "#333333"
+                  },
+                  {
+                    "type": "text",
+                    "text": "AI 協助分析影像中的可能異常",
+                    "size": "sm",
+                    "color": "#999999",
+                    "wrap": true
+                  }
+                ],
+                "margin": "md",
+                "flex": 1
+              }
+            ],
+            "margin": "md"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "↓",
+                "align": "center",
+                "color": "#5B9BD5",
+                "size": "xl",
+                "weight": "bold"
+              }
+            ],
+            "margin": "sm"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "📋",
+                    "size": "xl",
+                    "align": "center"
+                  }
+                ],
+                "width": "50px",
+                "height": "50px",
+                "backgroundColor": "#5B9BD5",
+                "cornerRadius": "25px",
+                "justifyContent": "center",
+                "alignItems": "center"
+              },
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "查看分析結果",
+                    "weight": "bold",
+                    "size": "md",
+                    "color": "#333333"
+                  },
+                  {
+                    "type": "text",
+                    "text": "了解影像狀況與後續健康建議",
+                    "size": "sm",
+                    "color": "#999999",
+                    "wrap": true
+                  }
+                ],
+                "margin": "md",
+                "flex": 1
+              }
+            ],
+            "margin": "md"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "text": "ℹ️ 僅供健康參考，非醫療診斷",
+        "color": "#999999",
+        "size": "xs",
+        "margin": "xxl",
+        "align": "center"
+      }
+    ],
+    "paddingAll": "20px"
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "button",
+        "style": "primary",
+        "color": "#17A2B8",
+        "action": {
+          "type": "postback",
+          "label": "開始檢測",
+          "data": "action=start_test"
+        }
+      }
+    ],
+    "paddingAll": "15px"
+  }
+},{
   "type": "bubble",
   "body": {
     "type": "box",
@@ -17,24 +317,17 @@
       },
       {
         "type": "box",
-        "layout": "horizontal",
+        "layout": "vertical",
         "contents": [
           {
-            "type": "box",
-            "layout": "vertical",
-            "contents": [
-              {
-                "type": "text",
-                "text": "眼科健康風險評估平台",
-                "weight": "bold",
-                "size": "md",
-                "color": "#333333"
-              }
-            ],
-            "margin": "md"
+            "type": "text",
+            "text": "眼科健康風險評估平台",
+            "weight": "bold",
+            "size": "md",
+            "color": "#333333"
           }
         ],
-        "margin": "lg"
+        "margin": "md"
       },
       {
         "type": "box",
@@ -42,7 +335,7 @@
         "contents": [
           {
             "type": "text",
-            "text": "提供眼科影像風險評估，協助了解結膜炎與白內障等常見眼疾的可能風險。",
+            "text": "協助了解結膜炎與白內障的可能風險，並提供相關衛教資訊。",
             "size": "sm",
             "color": "#666666",
             "wrap": true
@@ -74,7 +367,7 @@
             "margin": "sm"
           }
         ],
-        "margin": "lg"
+        "margin": "md"
       },
       {
         "type": "box",
@@ -99,13 +392,13 @@
                     "text": "免責聲明",
                     "weight": "bold",
                     "size": "sm",
-                    "color": "#FF6B6B"
+                    "color": "#E65100"
                   },
                   {
                     "type": "text",
-                    "text": "本服務所提供之資訊僅供健康參考，非醫療診斷或治療建議。如有任何不適或疑慮，請諮詢專業醫療人員。",
+                    "text": "本服務提供之資訊僅作為健康風險參考， 並非醫療診斷或治療建議。 若您有任何不適症狀或疑慮， 請諮詢專業醫療人員。",
                     "size": "xs",
-                    "color": "#FF6B6B",
+                    "color": "#666666",
                     "wrap": true,
                     "margin": "xs"
                   }
@@ -116,7 +409,7 @@
           }
         ],
         "margin": "xl",
-        "backgroundColor": "#FFF5F5",
+        "backgroundColor": "#FFF4E5",
         "cornerRadius": "8px",
         "paddingAll": "15px"
       },
@@ -128,7 +421,7 @@
             "type": "text",
             "text": "v1.0.0 | Eye's 疾模 Team",
             "size": "xxs",
-            "color": "#CCCCCC",
+            "color": "#9E9E9E",
             "align": "center"
           }
         ],
@@ -152,6 +445,9 @@
         "color": "#17A2B8"
       }
     ],
-    "paddingAll": "20px"
+    "paddingAll": "2px",
+    "margin": "none"
   }
+}
+  ]
 }

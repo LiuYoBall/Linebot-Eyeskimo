@@ -293,6 +293,19 @@ def handle_text_message(event):
     
     # === RAG 衛教問答 ===
     if is_rag_mode:
+
+        if len(text) > 25:
+            msg = "您的問題太長囉！請精簡至「20字內」重新輸入，或輸入「取消」來結束問答。"
+            
+            # 判斷是否要手動退出
+            if text == "取消":
+                db_service.update_rag_mode(user_id, False)
+                line_service.reply_text(event.reply_token, "已結束衛教諮詢。")
+                return
+
+            line_service.reply_text(event.reply_token, msg)
+            return
+        
         try:
             # 問完一次後自動關閉，避免使用者卡在衛教模式
             db_service.update_rag_mode(user_id, False)
@@ -511,7 +524,7 @@ def handle_postback(event):
         topic = params.get("topic")
         # 設定 RAG 模式為 True
         db_service.update_rag_mode(user_id, True, topic)
-        msg = "請輸入您想詢問的衛教內容 (10 字內) 📝"
+        msg = "請輸入您想詢問的衛教內容 (20 字內) 📝"
         line_service.reply_text(event.reply_token, msg)
         return
 

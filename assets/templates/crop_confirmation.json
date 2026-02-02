@@ -30,21 +30,42 @@
     "type": "box",
     "layout": "vertical",
     "paddingAll": "12px",
+    "spacing": "md",
     "contents": [
       {
         "type": "text",
-        "text": "AI 已自動框選眼睛位置，請確認是否正確？",
-        "wrap": true,
+        "text": "ℹ️ 若瞳孔「嚴重」反光或模糊請重新拍攝。",
         "size": "sm",
-        "color": "#666666"
-      },
-      {
-        "type": "text",
-        "text": "⚠️ 拍攝時請避免瞳孔反光",
-        "size": "xs",
         "color": "#666666",
         "align": "center",
         "margin": "md"
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "spacing": "xs",
+        "margin": "xl",
+        "paddingAll": "8px",
+        "backgroundColor": "#EEF3F8",
+        "cornerRadius": "8px",
+        "contents": [
+          {
+            "type": "text",
+            "text": "☑",
+            "size": "lg",
+            "color": "#228B22",
+            "weight": "regular",
+            "offsetTop": "2px"
+          },
+          {
+            "type": "text",
+            "text": "我已了解並同意系統於本次服務中，取得並使用上傳之眼部影像進行分析。",
+            "wrap": true,
+            "size": "sm",
+            "color": "#666666",
+            "flex": 1
+          }
+        ]
       }
     ]
   },
@@ -61,7 +82,7 @@
         "height": "md",
         "action": {
           "type": "postback",
-          "label": "正確，分析",
+          "label": "同意，並分析",
           "data": "action=confirm_cnn&report_id=PLACEHOLDER_REPORT_ID"
         }
       },
