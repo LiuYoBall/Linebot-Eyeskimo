@@ -8,7 +8,7 @@
     "contents": [
       {
         "type": "text",
-        "text": "請確認 AI 框選眼睛位置",
+        "text": "請確認 AI 自動框選位置",
         "weight": "bold",
         "size": "xl",
         "color": "#1565C0"
@@ -19,7 +19,7 @@
     "type": "image",
     "url": "PLACEHOLDER_CROP_IMG",
     "size": "full",
-    "aspectRatio": "1:1",
+    "aspectRatio": "16:9",
     "aspectMode": "cover",
     "action": {
       "type": "uri",
@@ -34,7 +34,7 @@
     "contents": [
       {
         "type": "text",
-        "text": "ℹ️ 若瞳孔「嚴重」反光或模糊請重新拍攝。",
+        "text": "ℹ️ 請確認影像中僅包含單側眼睛（單眼）。",
         "size": "sm",
         "color": "#666666",
         "align": "center",
@@ -45,27 +45,35 @@
         "layout": "horizontal",
         "spacing": "xs",
         "margin": "xl",
-        "paddingAll": "8px",
-        "backgroundColor": "#EEF3F8",
-        "cornerRadius": "8px",
         "contents": [
           {
             "type": "text",
-            "text": "☑",
+            "text": " ☑",
             "size": "lg",
             "color": "#228B22",
-            "weight": "regular",
-            "offsetTop": "2px"
+            "margin": "none",
+            "offsetStart": "10px",
+            "offsetEnd": "10px",
+            "weight": "regular"
           },
           {
             "type": "text",
-            "text": "我已了解並同意系統於本次服務中，取得並使用上傳之眼部影像進行分析。",
+            "text": "我已同意本系統存取上傳之眼部影像進行分析。",
             "wrap": true,
             "size": "sm",
             "color": "#666666",
-            "flex": 1
+            "align": "start",
+            "margin": "xs",
+            "offsetEnd": "lg",
+            "flex": 2,
+            "offsetStart": "-60px"
           }
-        ]
+        ],
+        "backgroundColor": "#EEF3F8",
+        "paddingAll": "none",
+        "paddingTop": "lg",
+        "paddingBottom": "lg",
+        "cornerRadius": "md"
       }
     ]
   },
