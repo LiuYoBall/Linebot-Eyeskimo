@@ -38,9 +38,9 @@
         "style": "secondary",
         "height": "sm",
         "action": {
-          "type": "message",
-          "label": "👨‍⚕️ 專業醫師 (Doctor)",
-          "text": "切換風格：doctor"
+          "type": "postback",
+          "label": "👨‍⚕️ 資深診療師",
+          "data": "action=set_style&mode=doctor"
         }
       },
       {
@@ -48,9 +48,9 @@
         "style": "secondary",
         "height": "sm",
         "action": {
-          "type": "message",
-          "label": "👩‍⚕️ 溫柔護理師 (Nurse)",
-          "text": "切換風格：nurse"
+          "type": "postback",
+          "label": "👩‍⚕️ 溫柔護理師 ",
+          "data": "action=set_style&mode=nurse"
         }
       },
       {
@@ -58,9 +58,9 @@
         "style": "secondary",
         "height": "sm",
         "action": {
-          "type": "message",
-          "label": "🤡 幽默演員 (Comedian)",
-          "text": "切換風格：comedian"
+          "type": "postback",
+          "label": "🤡 喜劇漫才師",
+          "data": "action=set_style&mode=comedian"
         }
       },
       {
@@ -68,9 +68,29 @@
         "style": "secondary",
         "height": "sm",
         "action": {
-          "type": "message",
-          "label": "🥢 亞洲父母 (Asian Parent)",
-          "text": "切換風格：asian_parent"
+          "type": "postback",
+          "label": "👵 人生說教家",
+          "data": "action=set_style&mode=parent"
+        }
+      },
+            {
+        "type": "button",
+        "style": "secondary",
+        "height": "sm",
+        "action": {
+          "type": "postback",
+          "label": "👼 護眼小天使",
+          "data": "action=set_style&mode=angel"
+        }
+      },
+            {
+        "type": "button",
+        "style": "secondary",
+        "height": "sm",
+        "action": {
+          "type": "postback",
+          "label": "💻 軟體工程師",
+          "data": "action=set_style&mode=engineer"
         }
       }
     ]

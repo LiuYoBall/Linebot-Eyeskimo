@@ -91,173 +91,6 @@ def handle_text_message(event):
     is_rag_mode = user_state.get("rag_mode", False)
     rag_topic = user_state.get("rag_topic", None)
 
-    # --- Rich Menu 按鈕處理 ---
-
-    # 1. [風格設定]
-    if text == "風格設定":
-        try:
-            bubble = line_service._load_template("type_selection.json")
-            line_service.api.reply_message(
-                event.reply_token,
-                FlexSendMessage(alt_text="請選擇助手風格", contents=bubble)
-            )
-        except Exception as e:
-            logger.error(f"風格選單載入失敗: {e}")
-            line_service.reply_text(event.reply_token, "暫時無法載入風格選單。")
-        return
-    
-    # 2. [開始檢測]
-    if text == "開始檢測":
-        # 引導使用者上傳圖片或選擇文字模式
-        line_service.send_camera_request(event.reply_token)
-        return
-
-    # 3. [歷史紀錄]
-    if text in ["歷史紀錄", "查詢紀錄", "History"]:
-        try:
-            # 讀取樣板
-            bubble_container = line_service._load_template("history_list.json")
-            row_template = line_service._load_template("history_row.json")
-
-            # C. 從 DB 撈取資料
-            reports = db_service.get_reports_by_user(user_id, limit=5)
-            
-            # 取得容器中用來放資料的 contents 陣列
-            # 根據您的 json，位置在 body -> contents
-            container_contents = bubble_container["body"]["contents"]
-
-            if not reports:
-                # D-1. 如果沒有資料將 placeholder 替換成提示文字
-                # 假設 contents[0] 就是 placeholder text component
-                json_str = json.dumps(container_contents)
-                json_str = json_str.replace("PLACEHOLDER_EMPTY_MSG", "您目前還沒有檢測紀錄喔！")
-                bubble_container["body"]["contents"] = json.loads(json_str)
-            else:
-                # D-2. 如果有資料
-                # 1. 先清空容器內的 placeholder (清空原本的 "PLACEHOLDER_EMPTY_MSG" 文字元件)
-                container_contents.clear()
-
-                # 2. 遍歷資料並產生 Row
-                for r in reports:
-                    # --- 邏輯處理  ---
-                    status_text = "檢測中"
-                    color = "#aaaaaa"
-                    
-                    if r.cnn_result:
-                        if r.cnn_result.status == DiagnosisStatus.NOT_DETECTED:
-                            status_text = "低風險"
-                            color = "#1DB446"
-                        else:
-                            disease_map = {"Cataract": "白內障", "Conjunctivitis": "結膜炎", "None": "低風險"}
-                            disease_enum_val = r.cnn_result.disease.value if hasattr(r.cnn_result.disease, "value") else str(r.cnn_result.disease)
-                            disease_name = disease_map.get(disease_enum_val, disease_enum_val)
-                            status_text = f"疑似{disease_name}"
-                            if "白內障" in status_text:
-                                color = "#EF6C00"
-                            elif "結膜炎" in status_text:
-                                color = "#D32F2F"
-                    
-                    try:
-                        dt_obj = datetime.fromtimestamp(r.timestamp)
-                        date_str = dt_obj.strftime("%Y/%m/%d")
-                    except:
-                        date_str = str(r.timestamp)
-
-                    # --- 動態生成 UI ---
-                    # 1. 深度複製一份 Row 的結構
-                    current_row = copy.deepcopy(row_template)
-                    # 2. 將 Dict 轉字串以便進行 replace
-                    row_str = json.dumps(current_row)
-                    # 3. 執行替換
-                    row_str = row_str.replace("PLACEHOLDER_DATE", date_str)
-                    row_str = row_str.replace("PLACEHOLDER_STATUS", status_text)
-                    row_str = row_str.replace("PLACEHOLDER_COLOR", color)
-                    row_str = row_str.replace("PLACEHOLDER_REPORT_ID", str(r.report_id))
-                    
-                    # 4. 轉回 Dict 並加入容器
-                    final_row = json.loads(row_str)
-                    container_contents.append(final_row)
-                    
-                    # 入分隔線 separator，讓列表更清楚
-                    container_contents.append({"type": "separator", "margin": "md"})
-
-            # E. 發送訊息
-            line_service.api.reply_message(
-                event.reply_token,
-                FlexSendMessage(alt_text="您的歷史檢查紀錄", contents=bubble_container)
-            )
-            
-        except Exception as e:
-            logger.error(f"查詢歷史失敗 (JSON Template): {e}")
-            line_service.reply_text(event.reply_token, "目前無法讀取紀錄，請稍後再試。")
-        return
-
-    # 4. [附近診所]
-    if text == "附近診所":
-        # 1. 取得 LIFF ID
-        liff_id = getattr(settings, "LIFF_ID", None)
-        if not liff_id:
-            line_service.reply_text(event.reply_token, "系統設定錯誤：找不到 LIFF ID。")
-            return
-
-        liff_url = f"https://liff.line.me/{liff_id}"
-        
-        # 2. 讀取並替換 JSON
-        try:
-            # 載入剛剛建立的 json 檔
-            bubble = line_service._load_template("location_guide.json")
-            
-            # 將 JSON 轉字串 -> 替換網址 -> 轉回物件
-            json_str = json.dumps(bubble)
-            json_str = json_str.replace("PLACEHOLDER_LIFF_URL", liff_url)
-            final_bubble = json.loads(json_str)
-            
-            # 3. 發送
-            line_service.api.reply_message(
-                event.reply_token,
-                FlexSendMessage(alt_text="請開啟定位搜尋附近診所", contents=final_bubble)
-            )
-        except Exception as e:
-            logger.error(f"載入定位引導樣板失敗: {e}")
-            # 萬一 JSON 讀取失敗，至少回傳個純文字連結當備案
-            line_service.reply_text(event.reply_token, f"請點擊連結開啟定位：\n{liff_url}")
-            
-        return
-
-    # 5. [衛教資訊]
-    if text in ["衛教資訊", "更多衛教"]:
-        try:
-            bubble = line_service._load_template("health_education_menu.json")
-            line_service.api.reply_message(
-                event.reply_token,
-                FlexSendMessage(alt_text="眼科衛教資訊選單", contents=bubble)
-            )
-        except Exception as e:
-            logger.error(f"衛教選單載入失敗: {e}")
-            line_service.reply_text(event.reply_token, "暫時無法載入衛教資訊。")
-        return
-
-    # --- 2. 處理風格切換指令 ---
-    if text.startswith("切換風格："):
-        # 取出冒號後面的英文代碼 (e.g., doctor, nurse...)
-        selected_role = text.split("：")[1].strip()
-        # 驗證是否為有效角色 (防呆)
-        valid_roles = llm_service.system_prompts.get("roles", {}).keys()
-        
-        if selected_role in valid_roles:
-            db_service.update_persona(user_id, selected_role)   
-            role_names = {
-                "doctor": "醫師",
-                "nurse": "護理師",
-                "comedian": "演員",
-                "asian_parent": "父母"
-            }
-            role_name = role_names.get(selected_role, selected_role)
-            line_service.reply_text(event.reply_token, f"已切換為【{role_name}】風格！！")
-        else:
-            line_service.reply_text(event.reply_token, "無效的角色選擇。")
-        return
-    
     # === 問卷啟動指令 ===
     if text in ["白內障檢測", "結膜炎檢測", "文字問診模式", "症狀問答"]:
         # 1. 決定 survey_id 與 filename
@@ -339,67 +172,6 @@ def handle_text_message(event):
             logger.error(f"RAG 流程失敗: {e}")
             line_service.reply_text(event.reply_token, "衛教諮詢發生錯誤。")
         return
-
-    
-    # === 歷史紀錄查詢 ===
-    if text in ["查詢紀錄", "歷史紀錄", "History"]:
-        try:
-            # 1. 從 DB 撈取該使用者的紀錄 (取得 DiagnosticReport 物件列表)
-            reports = db_service.get_reports_by_user(user_id, limit=5)
-            
-            # 2. 轉換資料格式 (DiagnosticReport -> UI Dict)
-            history_data = []
-            for r in reports:
-                # 判斷狀態顏色與顯示文字
-                status_text = "檢測中"
-                color = "#aaaaaa"
-                
-                # 使用 DiagnosisStatus Enum 比對 (Issue from screenshots)
-                if r.cnn_result:
-                    if r.cnn_result.status == DiagnosisStatus.NOT_DETECTED:
-                        status_text = "低風險"
-                        color = "#1DB446"  # 綠色
-                    else:
-                        # 顯示病症名稱 (例如: 疑似白內障)
-                        disease_map = {
-                            "Cataract": "白內障",
-                            "Conjunctivitis": "結膜炎",
-                            "None": "低風險"
-                        }
-                        # 取得英文 enum 值 (str)
-                        disease_enum_val = r.cnn_result.disease.value if hasattr(r.cnn_result.disease, "value") else str(r.cnn_result.disease)
-                        disease_name = disease_map.get(disease_enum_val, disease_enum_val)
-
-                        status_text = f"疑似{disease_name}"
-                        # 根據病症給顏色 (這裡可以簡單用紅色代表異常，或細分)
-                        if "白內障" in status_text:
-                            color = "#EF6C00" # 橘色
-                        elif "結膜炎" in status_text:
-                            color = "#D32F2F" # 紅色
-                
-                # 格式化時間
-                try:
-                    # 將 int timestamp 轉為 datetime 物件
-                    dt_obj = datetime.fromtimestamp(r.timestamp)
-                    date_str = dt_obj.strftime("%Y/%m/%d")
-                except Exception:
-                    # 預防萬一 timestamp 格式有誤
-                    date_str = str(r.timestamp)
-
-                history_data.append({
-                    "id": r.report_id,
-                    "date": date_str,
-                    "status": status_text,
-                    "color": color
-                })
-            
-            # 3. 發送列表
-            line_service.send_history_list(event.reply_token, history_data)
-            
-        except Exception as e:
-            logger.error(f"查詢歷史失敗: {e}")
-            line_service.reply_text(event.reply_token, "系統忙碌中，無法讀取紀錄。")
-        return
     
     # --- 3. 非指令的文字處理 (Default Fallback) ---
     try:
@@ -456,7 +228,7 @@ def handle_postback(event):
     logger.info(f"收到 Postback [{user_id}]: {data}")
 
     try:
-        params = dict(x.split('=') for x in data.split('&'))
+        params = dict(x.split('=', 1) for x in data.split('&'))
     except Exception as e:
         # data 可能不是 key=value 格式 (例如 "menu")
         params = {}
@@ -494,6 +266,114 @@ def handle_postback(event):
     # =================================================
     # 2. Action 分流處理
     # =================================================
+
+    # 1. [症狀問答] (對應: symptom_qa)
+    if action == "symptom_qa":
+        filename, s_id = "text_mode.json", "text_mode"
+        try:
+            survey_data = line_service._load_json(Path(f"assets/questionnaires/{filename}"))
+            if survey_data:
+                db_service.update_survey_progress(user_id, s_id, []) # 初始化
+                questions = survey_data.get("questions", {})
+                start_q_id = survey_data.get("start_question", "Q1")
+                first_q = questions.get(start_q_id)
+                if first_q:
+                    line_service.send_question(event.reply_token, first_q, survey_id=s_id)
+        except Exception as e:
+            logger.error(f"Postback 問卷啟動失敗: {e}")
+        return
+    
+    # 2. [開始檢測] (對應: start_test)
+    elif action == "start_test":
+        line_service.send_camera_request(event.reply_token)
+        return
+    
+    # 3. [歷史紀錄] (對應: history)
+    elif action == "history":
+        try:
+            # 1. 從 DB 撈取該使用者的紀錄
+            reports = db_service.get_reports_by_user(user_id, limit=5)
+            
+            # 2. 直接呼叫 line.py 中封裝好的函式
+            # (它會自動處理日期格式、狀態判斷、顏色設定並發送 Flex Message)
+            line_service.send_history_reports(event.reply_token, reports)
+            
+        except Exception as e:
+            logger.error(f"Postback 查詢歷史失敗: {e}")
+            line_service.reply_text(event.reply_token, "系統忙碌中，無法讀取紀錄。")
+        return
+    
+    # 4. [衛教資訊] (對應: education)
+    elif action == "education":
+        try:
+            bubble = line_service._load_template("health_education_menu.json")
+            line_service.api.reply_message(event.reply_token, FlexSendMessage(alt_text="衛教資訊選單", contents=bubble))
+        except Exception as e:
+            logger.error(f"Postback 衛教選單失敗: {e}")
+        return
+    
+    # 5. [風格設定] (對應: style_setting)
+    elif action == "style_setting":
+        try:
+            bubble = line_service._load_template("type_selection.json")
+            line_service.api.reply_message(event.reply_token, FlexSendMessage(alt_text="請選擇助手風格", contents=bubble))
+        except:
+            line_service.reply_text(event.reply_token, "無法載入風格選單。")
+        return
+    
+    # -----------------------------------------------------------
+    #  6. 處理風格切換 (接收選單回傳的動作)
+    # -----------------------------------------------------------
+    elif action == "set_style":
+        selected_role = params.get("mode")
+        
+        # 1. 定義角色對照表 
+        role_map = {
+            "doctor": "資深診療師",
+            "nurse": "溫柔護理師",
+            "comedian": "喜劇漫才師",
+            "parent": "人生說教家",
+            "angel": "護眼小天使",
+            "engineer": "軟體工程師"
+        }
+
+        # 2. 角色專屬台詞表，定義每個角色切換成功後要說的一句話
+        role_flavor_text = {
+            "doctor": "我會以專業醫學數據與臨床經驗為您分析。",
+            "nurse": "別擔心，深呼吸～讓我來溫柔地協助您檢查。",
+            "comedian": "眼睛跟笑話一樣，都要有『亮點』才行！嘿嘿！",
+            "parent": "我是為你好！整天看手機，還不快去檢查！", 
+            "angel": "我會用愛與魔法守護您的靈魂之窗喔！✨",
+            "engineer": "System initialized. Logic module loaded. 0 errors found."
+        }
+
+        # 3. 檢查是否為有效角色 (直接比對，不轉小寫)
+        if selected_role and selected_role in role_map:
+            
+            # 更新 DB
+            db_service.update_persona(user_id, selected_role)
+
+            # 準備回覆文字
+            display_name = role_map.get(selected_role)
+            flavor_msg = role_flavor_text.get(selected_role, "")
+
+            reply_text = f"已切換為【{display_name}】風格！\n{flavor_msg}"
+
+            line_service.reply_text(event.reply_token, reply_text)
+        else:
+            logger.warning(f"無效的風格請求: {selected_role}")
+            line_service.reply_text(event.reply_token, "找不到此風格設定。")
+
+        return
+    
+    # 7. [關於我們] (對應: welcome_msg)
+    elif action == "welcome_msg":
+        try:
+            bubble = line_service._load_template("welcome.json")
+            line_service.api.reply_message(event.reply_token, FlexSendMessage(alt_text="關於我們", contents=bubble))
+        except:
+            pass
+        return
 
     # (A) 問卷提交 -> 產生 LLM 報告
     if action == "submit_survey":

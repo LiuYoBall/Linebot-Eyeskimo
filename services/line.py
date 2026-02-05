@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from typing import Dict, Any
+from datetime import datetime
 
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import (
@@ -217,6 +218,56 @@ class LineService:
         except Exception as e:
             print(f"❌ Send analysis result failed: {e}")
             self.reply_text(reply_token, "產生報告時發生錯誤。")
+
+    # ==========================================
+    # 歷史紀錄整合函式
+    # ==========================================
+    def send_history_reports(self, reply_token: str, reports: list):
+        """
+        [高階函式] 接收 DB Report 物件列表，自動處理格式轉換並發送
+        """
+        formatted_records = []
+        
+        for r in reports:
+            # 1. 狀態文字與顏色判斷
+            status_text = "檢測中"
+            color = "#aaaaaa"
+            
+            if r.cnn_result:
+                if r.cnn_result.status == DiagnosisStatus.NOT_DETECTED:
+                    status_text = "低風險"
+                    color = "#1DB446"  # 綠色
+                else:
+                    disease_map = {"Cataract": "白內障", "Conjunctivitis": "結膜炎", "None": "低風險"}
+                    # 處理 Enum 或字串值
+                    val = r.cnn_result.disease
+                    if hasattr(val, "value"): val = val.value
+                    
+                    disease_name = disease_map.get(str(val), str(val))
+                    status_text = f"疑似{disease_name}"
+                    
+                    if "白內障" in status_text:
+                        color = "#EF6C00" # 橘色
+                    elif "結膜炎" in status_text:
+                        color = "#D32F2F" # 紅色
+
+            # 2. 時間格式化
+            try:
+                dt = datetime.fromtimestamp(r.timestamp)
+                date_str = dt.strftime("%Y/%m/%d")
+            except:
+                date_str = str(r.timestamp)
+
+            # 3. 組合 UI 資料
+            formatted_records.append({
+                "id": r.report_id,
+                "date": date_str,
+                "status": status_text,
+                "color": color
+            })
+
+        # 4. 呼叫底層渲染 (如果沒有資料，底層會處理 empty message)
+        self.send_history_list(reply_token, formatted_records)
 
     def send_question(self, reply_token: str, question_data: dict, survey_id: str = None):
         """
