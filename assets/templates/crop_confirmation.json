@@ -100,7 +100,7 @@
         "action": {
           "type": "postback",
           "label": "重新拍攝",
-          "data": "action=retry"
+          "data": "action=start_test"
         }
       }
     ]

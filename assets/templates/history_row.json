@@ -19,7 +19,7 @@
           "text": "PLACEHOLDER_STATUS",
           "size": "sm",
           "weight": "bold",
-          "color": "#333333"
+          "color": "PLACEHOLDER_COLOR"
         }
       ]
     },
