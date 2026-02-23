@@ -91,7 +91,7 @@ class ImageService:
             # 嘗試 1: 標準簽名 (適用於本地有 JSON Key 的情況)
             return blob.generate_signed_url(
                 version="v4",
-                expiration=timedelta(hours=24),
+                expiration=timedelta(day=3),
                 method="GET"
             )
         except Exception as e_standard:
@@ -103,7 +103,7 @@ class ImageService:
                 if sa_email and token:
                     return blob.generate_signed_url(
                         version="v4",
-                        expiration=timedelta(hours=24),
+                        expiration=timedelta(day=3),
                         method="GET",
                         service_account_email=sa_email,
                         access_token=token
@@ -227,13 +227,12 @@ class ImageService:
         scores = list(probs.values())
         
         # 設定中文字型 (確保標題與圖例正常顯示)
-        plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei', 'Arial', 'Heiti TC']
+        plt.rcParams['font.sans-serif'] = ['Noto Sans CJK TC', 'Noto Sans TC', 'WenQuanYi Micro Hei', 'Microsoft JhengHei', 'sans-serif']
         plt.rcParams['axes.unicode_minus'] = False
         
         # 建立圖表 (增加高度以容納標題與下方圖例)
         fig, ax = plt.subplots(figsize=(4, 3.5))
-        
-        y_pos = np.arange(len(labels))
+
         # 顏色設定 (紅、橘)
         bar_colors = ['#FF6B6B', '#FFA502']
         
@@ -323,8 +322,8 @@ class ImageService:
         if cnn_result_obj.status != DiagnosisStatus.NOT_DETECTED:
             # 從 CnnResult 物件中提取機率值來製作字典
             probs_dict = {
-                "Cataract": cnn_result_obj.prob_cataract,
-                "Conjunctivitis": cnn_result_obj.prob_conjunctivitis
+                "白內障": cnn_result_obj.prob_cataract,
+                "結膜炎": cnn_result_obj.prob_conjunctivitis
             }
             
             chart_bytes = self._generate_chart_bytes(probs_dict)

@@ -1,10 +1,11 @@
 # 1. 使用官方 Python 3.11 輕量版
 FROM python:3.11-slim
 
-# === 安裝系統級依賴 (防呆) ===
+# === 安裝系統級依賴與中文字型 ===
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
+    fonts-noto-cjk \
     && rm -rf /var/lib/apt/lists/*
 
 # 2. 從官方 image 複製 uv執行檔

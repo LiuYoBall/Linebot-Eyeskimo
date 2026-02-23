@@ -150,10 +150,19 @@ def handle_text_message(event):
             if rag_file_path.exists():
                 rag_data = line_service._load_json(rag_file_path)
                 found_items = []
-                for topic, content in rag_data.items():
-                    if topic in text or text in content:
-                        found_items.append(content)
+                
+                # 遍歷 JSON 中的每個主題區塊
+                for data in rag_data.items():
+                    keywords = data.get("keywords", [])
+                    content = data.get("content", "")
+                    
+                    # 只要使用者的輸入 (text) 包含該段落的任一關鍵字 (kw)，就將內容加入參考背景
+                    if any(kw in text for kw in keywords):
+                        if content not in found_items:
+                            found_items.append(content)
+                            
                 if found_items:
+                    # 取前3筆關聯資料，避免 Prompt 過長
                     context_text = "\n".join(found_items[:3])
 
             # 3. 呼叫 LLM (加入 topic 資訊若有)

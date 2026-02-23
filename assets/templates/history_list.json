@@ -47,9 +47,9 @@
         "type": "button",
         "style": "primary",
         "action": {
-          "type": "message",
+          "type": "postback",
           "label": "開始新的檢測",
-          "text": "開始檢測"
+          "data": "action=start_test"
         },
         "color": "#17A2B8"
       }
