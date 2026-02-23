@@ -91,7 +91,7 @@ class ImageService:
             # 嘗試 1: 標準簽名 (適用於本地有 JSON Key 的情況)
             return blob.generate_signed_url(
                 version="v4",
-                expiration=timedelta(day=3),
+                expiration=timedelta(days=3),
                 method="GET"
             )
         except Exception as e_standard:
@@ -103,7 +103,7 @@ class ImageService:
                 if sa_email and token:
                     return blob.generate_signed_url(
                         version="v4",
-                        expiration=timedelta(day=3),
+                        expiration=timedelta(days=3),
                         method="GET",
                         service_account_email=sa_email,
                         access_token=token
