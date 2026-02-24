@@ -152,7 +152,7 @@ def handle_text_message(event):
                 found_items = []
                 
                 # 遍歷 JSON 中的每個主題區塊
-                for data in rag_data.items():
+                for data in rag_data.values():
                     keywords = data.get("keywords", [])
                     content = data.get("content", "")
                     
