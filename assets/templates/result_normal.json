@@ -125,7 +125,7 @@
           "label": "👀 護眼小知識", 
           "data": "action=view_education&topic=prevention"
         },
-        "style": "secondary",
+        "style": "primary",
         "color": "#17A2B8",
         "height": "sm"
       },

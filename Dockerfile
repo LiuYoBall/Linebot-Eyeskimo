@@ -5,7 +5,7 @@ FROM python:3.11-slim
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
-    fonts-noto-cjk \
+    fonts-wqy-microhei \
     && rm -rf /var/lib/apt/lists/*
 
 # 2. 從官方 image 複製 uv執行檔

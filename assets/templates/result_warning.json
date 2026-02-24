@@ -149,7 +149,7 @@
                   "label": "了解症狀詳情", 
                   "data": "action=view_education&topic=PLACEHOLDER_DISEASE_NAME" 
                 },
-                "style": "secondary",
+                "style": "primary",
                 "color": "#17A2B8",
                 "height": "sm"
               },
@@ -176,7 +176,7 @@
         "action": { "type": "postback", "label": "重新檢測", "data": "action=retry" },
         "style": "link",
         "height": "sm",
-        "color": "#AAAAAA"
+        "color": "#2E7D32"
       },
       {
         "type": "text",

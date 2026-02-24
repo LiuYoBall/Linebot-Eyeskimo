@@ -140,73 +140,82 @@ class LineService:
         report_id_short = report.report_id[:8] # 取前8碼
 
         try:
-            # 2. 分流：決定使用哪個樣板
-            if cnn.status == DiagnosisStatus.NOT_DETECTED:
+            # 取得狀態與疾病的鍵值
+            status_str = cnn.status.name if hasattr(cnn.status, "name") else str(cnn.status)
+            disease_val = cnn.disease.value if hasattr(cnn.disease, "value") else str(cnn.disease)
+
+            # 分流：決定使用哪個樣板
+            if status_str == "NOT_DETECTED":
                 # === 正常流程 (Normal) ===
                 template_name = "result_normal.json"
-                # 讀取
                 bubble = self._load_template(template_name)
                 json_str = json.dumps(bubble)
                 
-                # 1. 準備圖片連結 
-                # 左圖：原圖+框 (若無 boxed 則退回原圖)
+                # 準備圖片連結 
                 boxed_url = report.original_boxed_url if report.original_boxed_url else report.original_image_url
-                # 右圖：裁切圖
                 crop_url = report.yolo_result.crop_image_url
                 
-                # 2. 執行替換
+                # 執行替換
                 json_str = json_str.replace("PLACEHOLDER_IMG_ORIGINAL_BOXED", boxed_url)
                 json_str = json_str.replace("PLACEHOLDER_IMG_CROP", crop_url)
-                # 3. ID替換
                 json_str = json_str.replace("PLACEHOLDER_REPORT_ID", report_id_short)
                 
-                theme = self.themes.get("default", {})
+                # 正常狀態的推播預覽文字
+                alt_text_title = "檢測無明顯異常"
 
             else:
                 # === 異常流程 (Warning) ===
                 template_name = "result_warning.json"
-                
-                # 取得主題色設定 (從 themes.json)
-                disease_key = cnn.disease if cnn.disease in self.themes else "default"
-                theme = self.themes.get(disease_key, self.themes["default"])
-                # 讀取
+            
+                # 為了防止設定檔讀不到，給予預設值防呆
+                theme_dict = self.themes.get("status_themes", {})
+                disease_dict = self.themes.get("disease_info", {})
+
+                theme_config = theme_dict.get(status_str, theme_dict.get("default", {}))
+                disease_config = disease_dict.get(disease_val, disease_dict.get("default", {}))
+
+                # 動態組合標題
+                dynamic_title = theme_config.get("TITLE_TEMPLATE", "").format(disease=disease_config.get("name", ""))
+
+                # 讀取並替換 JSON 樣板
                 bubble = self._load_template(template_name)
                 json_str = json.dumps(bubble)
 
-                # 1. 框選原圖 (左上)
+                # --- 圖片替換區塊維持不變 ---
+                # A. 框選原圖 (左上)
                 boxed_url = report.original_boxed_url if report.original_boxed_url else report.original_image_url
                 json_str = json_str.replace("PLACEHOLDER_IMG_ORIGINAL_BOXED", boxed_url)
 
-                # 2. 裁切圖 (右上)
+                # B. 裁切圖 (右上)
                 crop_url = report.yolo_result.crop_image_url
                 json_str = json_str.replace("PLACEHOLDER_IMG_CROP", crop_url)
 
-                # 3. 熱力圖 CAM (左下)
+                # C. 熱力圖 CAM (左下)
                 cam_url = cnn.heatmap_image_url if cnn.heatmap_image_url else crop_url
                 json_str = json_str.replace("PLACEHOLDER_IMG_CAM", cam_url)
 
-                # 4. 直方圖 Chart (右下)
+                # D. 直方圖 Chart (右下)
                 chart_url = cnn.chart_image_url if cnn.chart_image_url else "https://via.placeholder.com/300?text=No+Chart"
                 json_str = json_str.replace("PLACEHOLDER_IMG_CHART", chart_url)
 
-                # 5. ID替換
+                # E. ID替換
                 json_str = json_str.replace("PLACEHOLDER_REPORT_ID", report_id_short)
 
-                # 替換主題顏色與文字
-                for key, value in theme.items():
-                    json_str = json_str.replace(f"PLACEHOLDER_{key}", value)
-                
-                # 問卷指令
-                survey_map = {
-                    "Cataract": "白內障檢測",
-                    "Conjunctivitis": "結膜炎檢測"
-                }
-                survey_cmd = survey_map.get(cnn.disease, "文字問診模式")
-                json_str = json_str.replace("PLACEHOLDER_SURVEY_CMD", survey_cmd)
+                # -----------------------------
+                # 替換視覺與文字設定
+                json_str = json_str.replace("PLACEHOLDER_HEADER_BG", theme_config.get("HEADER_BG", "#F5F5F5"))
+                json_str = json_str.replace("PLACEHOLDER_BADGE_BG", theme_config.get("BADGE_BG", "#EEEEEE"))
+                json_str = json_str.replace("PLACEHOLDER_BADGE_TEXT", theme_config.get("BADGE_TEXT", "檢測結果"))
+                json_str = json_str.replace("PLACEHOLDER_THEME_COLOR", theme_config.get("THEME_COLOR", "#666666"))
 
-            # 發送訊息
-            alt_text_title = theme.get('DISEASE_NAME', '檢測結果') if cnn.status != DiagnosisStatus.NOT_DETECTED else "檢測正常"
-            
+                json_str = json_str.replace("PLACEHOLDER_TITLE", dynamic_title)
+                json_str = json_str.replace("PLACEHOLDER_DISEASE_NAME", disease_config.get("topic", "prevention"))
+                json_str = json_str.replace("PLACEHOLDER_SURVEY_CMD", disease_config.get("survey_cmd", "文字問診模式"))
+
+                # 推播預覽文字
+                alt_text_title = dynamic_title
+
+            # 發送訊息 (共用區塊)
             self.api.reply_message(
                 reply_token,
                 FlexSendMessage(
@@ -227,29 +236,32 @@ class LineService:
         [高階函式] 接收 DB Report 物件列表，自動處理格式轉換並發送
         """
         formatted_records = []
+
+        # 預先取得 JSON 中的設定字典
+        theme_dict = self.themes.get("status_themes", {})
+        disease_dict = self.themes.get("disease_info", {})
         
         for r in reports:
-            # 1. 狀態文字與顏色判斷
+            # 1. 狀態文字與顏色預設值
             status_text = "檢測中"
             color = "#aaaaaa"
             
             if r.cnn_result:
-                if r.cnn_result.status == DiagnosisStatus.NOT_DETECTED:
+                # 取得狀態與疾病的字串值
+                status_str = r.cnn_result.status.name if hasattr(r.cnn_result.status, "name") else str(r.cnn_result.status)
+                disease_val = r.cnn_result.disease.value if hasattr(r.cnn_result.disease, "value") else str(r.cnn_result.disease)
+
+                # 從 JSON 抓取顏色 (與診斷卡片共用 THEME_COLOR)
+                theme_config = theme_dict.get(status_str, theme_dict.get("default", {}))
+                color = theme_config.get("THEME_COLOR", "#aaaaaa")
+
+                if status_str == "NOT_DETECTED":
                     status_text = "低風險"
-                    color = "#1DB446"  # 綠色
                 else:
-                    disease_map = {"Cataract": "白內障", "Conjunctivitis": "結膜炎", "None": "低風險"}
-                    # 處理 Enum 或字串值
-                    val = r.cnn_result.disease
-                    if hasattr(val, "value"): val = val.value
-                    
-                    disease_name = disease_map.get(str(val), str(val))
+                    # 從 JSON 動態抓取疾病中文名稱
+                    disease_config = disease_dict.get(disease_val, disease_dict.get("default", {}))
+                    disease_name = disease_config.get("name", "異常")
                     status_text = f"疑似{disease_name}"
-                    
-                    if "白內障" in status_text:
-                        color = "#EF6C00" # 橘色
-                    elif "結膜炎" in status_text:
-                        color = "#D32F2F" # 紅色
 
             # 2. 時間格式化
             try:

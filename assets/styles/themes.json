@@ -1,26 +1,42 @@
 {
-  "Conjunctivitis": {
-    "HEADER_BG": "#FFF5F5",
-    "BADGE_BG": "#FFEBEE",
-    "BADGE_TEXT": "高風險異常",
-    "THEME_COLOR": "#C62828",
-    "TITLE": "偵測到疑似結膜炎特徵",
-    "DISEASE_NAME": "結膜炎"
+  "status_themes": {
+    "DETECTED": {
+      "HEADER_BG": "#FFF5F5",
+      "BADGE_BG": "#FFEBEE",
+      "BADGE_TEXT": "高風險異常",
+      "THEME_COLOR": "#C62828",
+      "TITLE_TEMPLATE": "偵測到疑似{disease}特徵"
+    },
+    "RISK": {
+      "HEADER_BG": "#FFF8E1",
+      "BADGE_BG": "#FFF3E0",
+      "BADGE_TEXT": "風險提示",
+      "THEME_COLOR": "#EF6C00",
+      "TITLE_TEMPLATE": "疑似早期{disease}特徵"
+    },
+    "default": {
+      "HEADER_BG": "#F5F5F5",
+      "BADGE_BG": "#EEEEEE",
+      "BADGE_TEXT": "檢測結果",
+      "THEME_COLOR": "#666666",
+      "TITLE_TEMPLATE": "影像特徵未見明顯異常"
+    }
   },
-  "Cataract": {
-    "HEADER_BG": "#FFF8E1",
-    "BADGE_BG": "#FFF3E0",
-    "BADGE_TEXT": "風險提示",
-    "THEME_COLOR": "#EF6C00",
-    "TITLE": "疑似早期白內障特徵",
-    "DISEASE_NAME": "白內障"
-  },
-  "default": {
-    "HEADER_BG": "#F5F5F5",
-    "BADGE_BG": "#EEEEEE",
-    "BADGE_TEXT": "檢測結果",
-    "THEME_COLOR": "#666666",
-    "TITLE": "檢測完成",
-    "DISEASE_NAME": "眼部異常"
+  "disease_info": {
+    "Cataract": {
+      "name": "白內障",
+      "survey_cmd": "白內障檢測",
+      "topic": "cataract"
+    },
+    "Conjunctivitis": {
+      "name": "結膜炎",
+      "survey_cmd": "結膜炎檢測",
+      "topic": "conjunctivitis"
+    },
+    "default": {
+      "name": "眼部異常",
+      "survey_cmd": "文字問診模式",
+      "topic": "prevention"
+    }
   }
 }
